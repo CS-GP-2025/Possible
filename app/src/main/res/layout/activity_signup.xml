@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/activity_bg"
+    tools:context=".ui.signLogin.signUp.SignupActivity">
+
+    <ImageView
+        android:id="@+id/sky_img"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/login_h_img"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/std_img"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/login_b_img"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_margin="20dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/std_img"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sky_img">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/pubble"
+            android:text="Possible"
+            android:textSize="50sp"
+            app:layout_constraintBottom_toBottomOf="@+id/sky_img"
+            app:layout_constraintEnd_toEndOf="@+id/sky_img"
+            app:layout_constraintStart_toStartOf="@+id/sky_img"
+            app:layout_constraintTop_toTopOf="@+id/sky_img" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center"
+            >
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/profile_image"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@color/white"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/circularImage" />
+
+            <ImageView
+                android:id="@+id/choose_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/camera"
+                android:layout_margin="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_margin="10dp"
+            android:drawableStart="@drawable/profile_icon"
+            android:background="@drawable/input_field"
+            android:padding="10dp"
+            android:drawablePadding="10dp"
+            android:fontFamily="@font/font"
+            android:inputType="textEmailAddress"
+            android:hint="Moaz"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/emailET"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_margin="10dp"
+            android:drawableStart="@drawable/email_icon"
+            android:background="@drawable/input_field"
+            android:padding="10dp"
+            android:drawablePadding="10dp"
+            android:fontFamily="@font/font"
+            android:inputType="textEmailAddress"
+            android:hint="Moaz @gmail.com"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/passwordET"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/input_field"
+            android:padding="10dp"
+            android:fontFamily="@font/font"
+            android:inputType="textPassword"
+            android:drawableStart="@drawable/password_icon"
+            android:drawablePadding="10dp"
+            android:hint="MoazEssa187.@"
+            android:textSize="20sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/sign"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:fontFamily="@font/font"
+            android:background="@drawable/custom_btn"
+            android:text="Signup" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

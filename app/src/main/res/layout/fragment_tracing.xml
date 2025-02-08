@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/beginner_draw_fragment_container"
+    tools:context=".ui.tracing.TracingFragment"
+    >
+    <com.example.possible.ui.tracing.TracingView
+        android:id="@+id/TracingView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="TODO"
+        android:src="#0CBD5151"/>
+
+
+
+</FrameLayout>

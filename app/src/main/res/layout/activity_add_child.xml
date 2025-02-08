@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/activity_bg"
+    tools:context=".ui.profile.children.AddChildActivity">
+
+    <ImageView
+        android:id="@+id/backArrowIV"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/back_arrow"
+        android:layout_margin="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:layout_height="0dp"
+android:gravity="top"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/backArrowIV">
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/profileIV"
+        android:layout_width="100dp"
+        app:shapeAppearanceOverlay="@style/circularImage"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        app:strokeWidth="2dp"
+        android:padding="5dp"
+        android:layout_margin="10dp"
+        app:strokeColor="@color/white"
+        android:layout_height="100dp"
+        />
+        <TextView
+            android:fontFamily="@font/font"
+            android:layout_width="match_parent"
+            android:textSize="15sp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="2dp"
+            android:textStyle="normal"
+            android:textColor="@color/black"
+            android:layout_height="wrap_content"
+            android:text="child name"/>
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="child name"
+            android:gravity="center"
+            android:padding="7dp"
+            android:fontFamily="@font/font"
+            android:inputType="textPersonName"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/input_field"
+            />
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:fontFamily="@font/font"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:text="Gender"/>
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/femaleRB"
+                    android:layout_width="wrap_content"
+                    android:background="@drawable/custom_radio_btn"
+                    android:layout_weight="1"
+                    android:text="Female"
+                    android:fontFamily="@font/font"
+                    android:layout_marginEnd="20dp"
+                    android:padding="5dp"
+                    android:button="@android:color/transparent"
+                    android:gravity="center"
+                    android:layout_height="wrap_content"/>
+                <RadioButton
+                    android:id="@+id/maleRB"
+                    android:layout_width="wrap_content"
+                    android:text="Male"
+                    android:fontFamily="@font/font"
+                    android:checked="true"
+                    android:button="@android:color/transparent"
+                    android:gravity="center"
+                    android:background="@drawable/custom_radio_btn"
+                    android:layout_weight="1"
+                    android:padding="5dp"
+                    android:layout_height="wrap_content"/>
+            </RadioGroup>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            tools:ignore="ExtraText">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:textSize="15sp"
+                android:fontFamily="@font/font"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:text="Age"/>
+                />
+            <NumberPicker
+                android:id="@+id/agePicker"
+                android:layout_width="100dp"
+                android:fontFamily="@font/font"
+                android:background="@drawable/input_field"
+                android:layout_height="100dp"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/difficultyLL"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:layout_marginStart="2dp"
+                android:fontFamily="@font/font"
+                android:layout_marginTop="10dp"
+                android:layout_height="wrap_content"
+                android:text="Learning Difficulties"/>
+            <EditText
+                android:id="@+id/difficultyEt"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:fontFamily="@font/font"
+                android:layout_marginTop="3dp"
+                android:inputType="text"
+                android:hint="No difficulties"
+                android:gravity="center"
+                android:background="@drawable/input_field"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/font"
+            android:layout_marginStart="2dp"
+            android:layout_height="wrap_content"
+            android:text="Diseases"/>
+        <EditText
+            android:id="@+id/diseasesEt"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/input_field"
+            android:hint="No diseases"
+            android:fontFamily="@font/font"
+            android:gravity="center"
+            android:inputType="text" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/doneBtn"
+            android:background="@drawable/custom_btn"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/font"
+            android:textColor="@color/white"
+            android:text="Done"
+            android:gravity="center"/>
+
+
+    </LinearLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
