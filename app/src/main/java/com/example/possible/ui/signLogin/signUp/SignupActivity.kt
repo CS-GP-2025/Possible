@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +18,6 @@ import com.example.possible.databinding.ActivitySignupBinding
 import com.example.possible.repo.local.SharedPref
 import com.example.possible.ui.MainActivity
 import com.example.possible.ui.splach.AnimationActivity
-import com.example.possible.util.LoginChecker
 
 class SignupActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding
@@ -54,9 +54,12 @@ class SignupActivity : AppCompatActivity() {
             startActivityForResult(intent, GALLERY_REQUEST_CODE)
         }
     }
+    private fun goToAnimation(){
+        startActivity(Intent(this, AnimationActivity::class.java))
+        finish()
+    }
 
     private fun onSignUp() {
-        if(checkIfAllFieldsAreValid()){
             if(checkForApiConditions()){
                 saveData(
                     binding.name.text.toString(),
@@ -64,55 +67,16 @@ class SignupActivity : AppCompatActivity() {
                     binding.passwordET.text.toString()
                 )
                 sendDataForApi()
-                startActivity(Intent(this, AnimationActivity::class.java))
-                finish()
-            }
-
+                viewMessageSuccessful()
+                binding.nextBtn.setOnClickListener {
+                    goToAnimation()
+                }
         }
     }
 
     private fun saveData(name: String, email: String, password: String) {
          pref.setProfileData(name,email,password,true)
         pref.setImage(imageUriString)
-    }
-
-    private fun checkIfAllFieldsAreValid(): Boolean {
-        val email = binding.emailET
-        val password = binding.passwordET
-        val name = binding.name
-        val result = when{
-            name.text.isEmpty() -> {
-                name.error = "Name is required"
-                false
-            }
-            !LoginChecker.validEnglishName(name.text.toString()) ->{
-                name.error = "Invalid Name"
-                false
-            }
-
-            email.text.isEmpty() ->{
-                email.error = "Email is required"
-                false
-            }
-            password.text.isEmpty() ->{
-                password.error = "Password is required"
-                false
-            }
-            !LoginChecker.isValidEmail(email.text.toString()) ->{
-                email.error = "Invalid Email"
-                false
-            }
-            !LoginChecker.passwordMoreThan8(password.text.toString()) ->{
-                password.error = "Password must be more than 8"
-                false
-            }
-            imageUriString.isEmpty() ->{
-                Toast.makeText(this, "select image", Toast.LENGTH_SHORT).show()
-                false
-            }
-            else -> true
-    }
-        return result
     }
 
     private fun sendDataForApi(){
@@ -158,6 +122,11 @@ class SignupActivity : AppCompatActivity() {
                 imageUriString = selectedImageUri.toString()
             }
         }
+    }
+    private fun viewMessageSuccessful(){
+        binding.createdView.visibility=View.VISIBLE
+        binding.createdView.animate().alpha(0f).setDuration(0).start()
+        binding.createdView.animate().alpha(1f).setDuration(1000).start()
     }
 
 

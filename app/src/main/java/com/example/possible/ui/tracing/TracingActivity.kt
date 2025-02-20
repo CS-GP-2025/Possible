@@ -10,20 +10,22 @@ import androidx.fragment.app.Fragment
 import com.example.possible.databinding.ActivityTracingBinding
 import com.example.possible.repo.local.LettersAndNumbers
 import com.example.possible.repo.local.SharedPref
+import com.example.possible.util.TestDecoder
 
 class TracingActivity : AppCompatActivity() {
     private var index=0
+    private var numOfQuestion=0
     private var type=""
     private var pathsOfNumber=0
     private var ofCompletedPaths=0
     private lateinit var fragment:TracingFragment
     private lateinit var binding: ActivityTracingBinding
-    private lateinit var sharedPreferences:SharedPref
+    private lateinit var pref:SharedPref
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityTracingBinding.inflate(layoutInflater)
-        sharedPreferences= SharedPref(this)
+        pref= SharedPref(this)
 
          index=intent.extras?.getInt("letterIndex",0)!!
          type=intent.extras?.getString("type",null)!!
@@ -32,6 +34,11 @@ class TracingActivity : AppCompatActivity() {
 
 
         binding.doneButton.setOnClickListener{
+            if(isItFromSettingTest()){
+                getTheQuestionOnDone(numOfQuestion)
+                finish()
+            }
+            else{
             pathsOfNumber=fragment.getResult().first
             ofCompletedPaths=fragment.getResult().second
             if(pathsOfNumber==ofCompletedPaths){
@@ -42,7 +49,7 @@ class TracingActivity : AppCompatActivity() {
             }
             else{
                 Toast.makeText(this, "Continue", Toast.LENGTH_SHORT).show()
-            }
+            }}
         }
 
         binding.nextBtn.setOnClickListener {
@@ -93,7 +100,7 @@ class TracingActivity : AppCompatActivity() {
             .commit()
     }
     private fun loadProfileImage() {
-        val savedUri = sharedPreferences.getImage()
+        val savedUri = pref.getImage()
         if (savedUri != null) {
             val uri = Uri.parse(savedUri)
             binding.profileIV.setImageURI(uri)
@@ -102,7 +109,33 @@ class TracingActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         loadProfileImage()
-        val name=sharedPreferences.getProfileDetails().getName()
+        val name=pref.getProfileDetails().getName()
         binding.userNameTV.text=name
+    }
+    private fun isItFromSettingTest():Boolean{
+        numOfQuestion = intent.getIntExtra("noOfQuestion",0)
+        return numOfQuestion!=0
+
+    }
+
+    private fun getTheQuestionOnDone(numOfQuestion:Int){
+        val ques = TestDecoder.encodeLetterOrNumber(index,type,"beginner")
+        setWhichQuestion(ques,numOfQuestion)
+    }
+    private fun setWhichQuestion(ques:String,numOfQuestion:Int){
+        when(numOfQuestion){
+            1->{
+                pref.setQ1(ques)
+            }
+            2->{
+                pref.setQ2(ques)
+            }
+            3->{
+                pref.setQ3(ques)
+            }
+            4->{
+                pref.setQ4(ques)
+            }
+        }
     }
 }

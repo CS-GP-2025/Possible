@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.graphics.*
+import android.view.ViewGroup.LayoutParams
 import android.view.MotionEvent
 import kotlin.math.sqrt
 
@@ -257,6 +258,17 @@ class TracingView @JvmOverloads constructor(
             drawing = true
             invalidate()
         }
+    }
+    @SuppressLint("DrawAllocation")
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+
+        // هنا سيتم تحديد المكان داخل الفراجمنت
+        val width = right - left
+        val height = bottom - top
+
+        // تغيير حجم الكستم فيو ليأخذ الحجم المتاح في الفراجمنت
+        layoutParams = LayoutParams(width, height)
     }
 
 

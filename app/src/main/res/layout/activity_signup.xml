@@ -128,4 +128,33 @@
             android:text="Signup" />
 
     </LinearLayout>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/createdView"
+    android:visibility="gone"
+    android:layout_width="wrap_content"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/hasBeenCreated"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:src="@drawable/your_acc_has_been_created"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/nextBtn"
+        android:layout_width="250dp"
+        android:layout_height="90dp"
+        android:background="@android:color/transparent"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

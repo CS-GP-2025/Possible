@@ -24,9 +24,30 @@
         android:theme="@style/Theme.Possible"
         tools:targetApi="31">
         <activity
-            android:name=".ui.splach.AnimationActivity"
+            android:name=".ui.specialist.tests.TestsActivity"
             android:exported="false" />
-        <!-- أنشطة التسجيل والولوج -->
+        <activity
+            android:name=".ui.test.dysgraphiaTest.SentenceMainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.test.dysgraphiaTest.DysgraphiaTestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.test.TestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.specialist.tests.SettingTestActivity"
+            android:exported="false"
+            android:theme="@style/mat" />
+        <activity
+            android:name=".ui.specialist.tests.TestTypesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.specialist.SpecialistMainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.splach.AnimationActivity"
+            android:exported="false" /> <!-- أنشطة التسجيل والولوج -->
         <activity
             android:name=".ui.signLogin.signUp.SignupActivity"
             android:exported="false" />

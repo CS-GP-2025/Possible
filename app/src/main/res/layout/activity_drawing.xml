@@ -12,7 +12,7 @@ tools:context=".ui.drawing.DrawingActivity">
     android:id="@+id/header"
     android:layout_marginStart="15dp"
     android:layout_marginEnd="15dp"
-    android:layout_marginTop="25dp"
+    android:layout_marginTop="30dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_constraintTop_toTopOf="parent"
@@ -59,7 +59,7 @@ tools:context=".ui.drawing.DrawingActivity">
 
 <ImageView
     android:id="@+id/imageView3"
-    android:layout_width="150dp"
+    android:layout_width="50dp"
     android:layout_height="0dp"
     android:src="@drawable/side_img"
     app:layout_constraintBottom_toTopOf="@+id/imageView2"
@@ -77,78 +77,34 @@ tools:context=".ui.drawing.DrawingActivity">
     app:layout_constraintStart_toStartOf="parent" />
 
 
-    <LinearLayout
-        android:id="@+id/hint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:orientation="horizontal"
-        android:layoutDirection="ltr"
-        android:padding="20dp"
-        app:layout_constraintEnd_toEndOf="@+id/frameDrawer"
-        app:layout_constraintStart_toStartOf="@+id/frameDrawer"
-        app:layout_constraintTop_toBottomOf="@+id/header">
-
-        <TextView
-            android:id="@+id/drawHint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Draw"
-            android:fontFamily="@font/font"
-            android:textSize="20sp"
-             />
-
-        <TextView
-            android:id="@+id/type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:text="letter"
-            android:fontFamily="@font/font"
-            android:textSize="20sp"
-             />
-
-        <TextView
-            android:id="@+id/letterName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/frame_border"
-            android:paddingBottom="3dp"
-            android:paddingEnd="5dp"
-            android:paddingStart="5dp"
-            android:text="A"
-            android:textSize="30sp"
-            android:fontFamily="@font/font"
-            />
-    </LinearLayout>
-
     <FrameLayout
         android:id="@+id/frameDrawer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="25dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
         android:layout_marginBottom="30dp"
         android:background="@drawable/frame_border"
         app:layout_constraintBottom_toTopOf="@+id/imageView2"
-        app:layout_constraintEnd_toStartOf="@+id/imageView3"
+        app:layout_constraintEnd_toEndOf="@+id/imageView3"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hint" />
+        app:layout_constraintTop_toBottomOf="@+id/header" />
 
-<androidx.appcompat.widget.AppCompatButton
-    android:id="@+id/doneButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="#02000000"
-    android:text="Done"
-    android:textSize="20sp"
-    android:fontFamily="@font/font"
-    app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.38"
-    app:layout_constraintStart_toStartOf="@+id/imageView2"
-    app:layout_constraintTop_toTopOf="@+id/imageView2"
-    app:layout_constraintVertical_bias="0.513" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/doneButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#02000000"
+        android:fontFamily="@font/font"
+        android:text="Done"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        app:layout_constraintEnd_toEndOf="@+id/frameDrawer"
+        app:layout_constraintHorizontal_bias="0.38"
+        app:layout_constraintStart_toStartOf="@+id/frameDrawer"
+        app:layout_constraintTop_toTopOf="@+id/imageView2"
+        app:layout_constraintVertical_bias="0.513" />
 <androidx.constraintlayout.widget.ConstraintLayout
     android:visibility="gone"
     android:id="@+id/celeprationView"

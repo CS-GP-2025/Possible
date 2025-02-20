@@ -24,7 +24,7 @@ class LettersAdapter(private val data: List<Letter>,val listener: LettersListene
     override fun onBindViewHolder(holder: LetterHolder, position: Int) {
         holder.binding.image.setImageResource(data[position].imageId)
         holder.binding.root.setOnClickListener{
-            listener.OnClick(data[position],position)
+            listener.onClick(data[position],position)
         }
     }
 

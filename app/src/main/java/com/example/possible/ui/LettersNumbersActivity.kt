@@ -75,7 +75,7 @@ class LettersNumbersActivity : AppCompatActivity() , LettersListener {
         setContentView(binding.root)
     }
 
-    override fun OnClick(letter: Letter, position: Int) {
+    override fun onClick(letter: Letter, position: Int) {
         val intent1 = Intent(this, TracingActivity::class.java)
         intent1.putExtra("letterIndex",position)
         intent1.putExtra("type",letter.type)

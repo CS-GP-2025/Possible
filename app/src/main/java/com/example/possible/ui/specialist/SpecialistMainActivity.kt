@@ -1,0 +1,78 @@
+package com.example.possible.ui.specialist
+
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.example.possible.R
+import com.example.possible.databinding.ActivitySpecialistMainBinding
+import com.example.possible.repo.local.SharedPref
+import com.example.possible.ui.profile.ProfileActivity
+import com.example.possible.ui.profile.children.AddChildActivity
+import com.example.possible.ui.profile.children.Children
+import com.example.possible.ui.specialist.tests.TestTypesActivity
+import com.example.possible.ui.specialist.tests.TestsActivity
+import com.example.possible.ui.test.TestActivity
+
+class SpecialistMainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySpecialistMainBinding
+    private lateinit var pref: SharedPref
+    override fun onCreate(savedInstanceState: Bundle?) {
+        binding = ActivitySpecialistMainBinding.inflate(layoutInflater)
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        pref = SharedPref(this)
+        setContentView(binding.root)
+        setControllers()
+
+
+
+    }
+    private fun setControllers(){
+        binding.childrenLL.setOnClickListener {
+            val intent = Intent(this, Children::class.java)
+            startActivity(intent)
+        }
+        binding.newTest.setOnClickListener {
+           val intent = Intent(this, TestTypesActivity::class.java)
+           startActivity(intent)
+        }
+        binding.Tests.setOnClickListener {
+           val intent = Intent(this, TestsActivity::class.java)
+           startActivity(intent)
+        }
+        binding.newChildBtn.setOnClickListener {
+            val intent = Intent(this, AddChildActivity::class.java)
+            intent.putExtra("mode", "add")
+            startActivity(intent)
+        }
+        binding.profileIV.setOnClickListener {
+            goToProfile()
+        }
+        binding.header.setOnClickListener {
+            goToProfile()
+        }
+
+
+    }
+    private fun goToProfile(){
+        val intent = Intent(this, ProfileActivity::class.java)
+        startActivity(intent)
+    }
+    private fun loadProfileDetails() {
+        val savedUri = pref.getImage()
+        if (savedUri != null) {
+            val uri = Uri.parse(savedUri)
+            binding.profileIV.setImageURI(uri)
+        }
+        val userName = pref.getProfileDetails().getName()
+        binding.userNameTV.text=userName
+    }
+    override fun onResume() {
+        super.onResume()
+        loadProfileDetails()
+    }
+}

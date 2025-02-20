@@ -10,10 +10,11 @@ import com.example.possible.databinding.ActivitySplachBinding
 import com.example.possible.repo.local.SharedPref
 import com.example.possible.ui.MainActivity
 import com.example.possible.ui.signLogin.Login.LoginActivity
+import com.example.possible.ui.specialist.SpecialistMainActivity
 
 class SplachActivity : AppCompatActivity(){
     private lateinit var binding: ActivitySplachBinding
-
+    private var dir = -1
       private lateinit var p: View
 
       private lateinit var o: View
@@ -55,7 +56,8 @@ class SplachActivity : AppCompatActivity(){
         hideWord()
         handler.postDelayed({
             animateText()
-        },1000)
+            animateView()
+        },800)
 
         handler.postDelayed({
             if(isLogin()){
@@ -64,25 +66,34 @@ class SplachActivity : AppCompatActivity(){
             else{
                 goToLoginActivity()
             }
-        },6000)
+        },3000)
     }
 
     private fun animateText() {
-        animateLetter(b, 6, 100)
-        animateLetter(o, 2,800 )
-        animateLetter(s, 10, 100)
-        animateLetter(s2, 20, 50)
-        animateLetter(i, 30, 10)
-        animateLetter(p, 1, 1000)
-        animateLetter(l, 6, 500)
-        animateLetter(e, 3, 1000)
-        animateLetter(brain, 2, 1500)
+        animateLetter(p, 1, 200)
+        animateLetter(o, 2,200 )
+        animateLetter(s, 3, 200)
+        animateLetter(s2, 4, 200)
+        animateLetter(i, 5,200 )
+        animateLetter(b, 4,200 )
+        animateLetter(l, 3, 200)
+        animateLetter(e, 2, 200)
+        animateLetter(brain, 1, 200)
+    }
+    private fun animateView(){
+        binding.titleShow.animate().scaleX(.8f).scaleY(.8f).setDuration(1000)
+            .withEndAction{
+                binding.titleShow.animate().scaleX(1f).scaleY(1f).setDuration(1000).start()
+            }.start()
     }
     private fun animateLetter(view: View, times: Int, delay: Long) {
+        dir *= -1 // تغيير الاتجاه كل مرة
         fun startAnimation(count: Int) {
+            val valueOfTrans =delay * dir .toFloat()
+
             if (count < times) {
-                view.animate().alpha(1f).setDuration(delay).withEndAction {
-                    view.animate().alpha(0f).setDuration(delay + 100).withEndAction {
+                view.animate().alpha(1f).setDuration(delay).translationX(-valueOfTrans*-1).translationY(valueOfTrans).withEndAction {
+                    view.animate().alpha(0f).setDuration(delay/5).translationX(1f).translationY(1f).withEndAction {
                         startAnimation(count + 1) // استدعاء الأنيميشن مرة أخرى حتى ينتهي العدد المطلوب
                     }.start()
                 }.start()
@@ -91,24 +102,29 @@ class SplachActivity : AppCompatActivity(){
             }
         }
 
+        //dir *= -1 // تغيير الاتجاه كل مرة
         startAnimation(0) // تشغيل الأنيميشن أول مرة
     }
 
     private fun hideWord(){
-        b.animate().alpha(0f).setDuration(2000).start()
-        l.animate().alpha(0f).setDuration(1500).start()
-        e.animate().alpha(0f).setDuration(1000).start()
-        s.animate().alpha(0f).setDuration(500).start()
-        s2.animate().alpha(0f).setDuration(1000).start()
-        i.animate().alpha(0f).setDuration(300).start()
-        o.animate().alpha(0f).setDuration(250).start()
-        p.animate().alpha(0f).setDuration(1000).start()
-        brain.animate().alpha(0f).setDuration(1000).start()
+        p.animate().alpha(0f).setDuration(800).start()
+        o.animate().alpha(0f).setDuration(600).start()
+        s.animate().alpha(0f).setDuration(700).start()
+        s2.animate().alpha(0f).setDuration(700).start()
+        i.animate().alpha(0f).setDuration(700).start()
+        b.animate().alpha(0f).setDuration(600).start()
+        l.animate().alpha(0f).setDuration(800).start()
+        e.animate().alpha(0f).setDuration(800).start()
+        brain.animate().alpha(0f).setDuration(800).start()
 
     }
     private fun goToMainActivity() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
+        if(pref.getPath()=="parent"){
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+        else if(pref.getPath()=="specialist"){
+            startActivity(Intent(this, SpecialistMainActivity::class.java))
+        }
         finish()
     }
     private fun goToLoginActivity() {

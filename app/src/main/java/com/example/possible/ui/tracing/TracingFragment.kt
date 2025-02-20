@@ -63,7 +63,7 @@ class TracingFragment : Fragment() {
         //imageView=binding.imageView
        // binding.beginnerDrawFragmentContainer.setBackgroundResource(bg!!)
         /**/
-
+       binding.letterName.text = tracingName
 
         return binding.root
     }
@@ -72,7 +72,21 @@ class TracingFragment : Fragment() {
         completedPaths=binding.TracingView.completedPaths.size
         return Pair(pathsSize,completedPaths)
     }
-    /**/
+    fun getResultsForTest():Int{
+        val pathsSize=binding.TracingView.pathArray.size
+        val completedPaths=binding.TracingView.completedPaths.size
+        val points= pathsSize-completedPaths
+        val result = if(points == 0){
+            2
+        }
+        else if((pathsSize.toFloat()/points.toFloat()).toInt() >=2){
+            1
+        }
+        else{
+            0
+    }
+        return result
+    }
 
 
 

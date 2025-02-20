@@ -10,16 +10,21 @@ import com.example.possible.R
 import com.example.possible.databinding.ActivityAddingBinding
 import com.example.possible.model.Adding
 import com.example.possible.repo.local.MathQuestions
+import com.example.possible.repo.local.SharedPref
+import com.example.possible.util.TestDecoder
 import com.example.possible.util.adapter.ResultAdapter
 
 class AddingActivity : AppCompatActivity() {
     lateinit var binding: ActivityAddingBinding
     private lateinit var question: Adding
+    private lateinit var pref: SharedPref
     private lateinit var resultArray: ArrayList<Int>
+    private var numOfQuestion=0
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityAddingBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        pref= SharedPref(this)
         val operationType=intent.getStringExtra("operationName")
         val operationLevel=intent.getStringExtra("operationLevel")
 
@@ -33,13 +38,19 @@ class AddingActivity : AppCompatActivity() {
 
         val linearLayoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.resultAdapter.layoutManager = linearLayoutManager
+
         binding.done.setOnClickListener{
-            val msg=if(question.c==getTheSum()) "true" else "wrong"
+          if(isItFromSettingTest()){
+              getTheQuestionOnDone(numOfQuestion)
+              finish()
+          }
+          else{  val msg=if(question.c==getTheSum()) "true" else "wrong"
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
             if(msg=="true"){
                 binding.celeprationAnim.visibility=VISIBLE
                 binding.celeprationAnim.playAnimation()
             }
+          }
 
         }
         binding.backArrowIV.setOnClickListener{
@@ -94,4 +105,31 @@ class AddingActivity : AppCompatActivity() {
 
             }
     }
+    private fun isItFromSettingTest():Boolean{
+        numOfQuestion = intent.getIntExtra("noOfQuestion",0)
+        return numOfQuestion!=0
+
+    }
+
+    private fun getTheQuestionOnDone(numOfQuestion:Int){
+        val ques = TestDecoder.encodeAdding(question)
+        setWhichQuestion(ques,numOfQuestion)
+    }
+    private fun setWhichQuestion(ques:String,numOfQuestion:Int){
+        when(numOfQuestion){
+            1->{
+                pref.setQ1(ques)
+            }
+            2->{
+                pref.setQ2(ques)
+            }
+            3->{
+                pref.setQ3(ques)
+            }
+            4->{
+                pref.setQ4(ques)
+            }
+        }
+    }
+
 }

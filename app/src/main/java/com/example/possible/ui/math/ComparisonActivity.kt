@@ -7,15 +7,20 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.possible.databinding.ActivityComparisionBinding
 import com.example.possible.repo.local.MathQuestions
+import com.example.possible.repo.local.SharedPref
+import com.example.possible.util.TestDecoder
 
 class ComparisonActivity : AppCompatActivity() {
     private lateinit var binding: ActivityComparisionBinding
     private lateinit var comparison:Triple<Int,Int,String>
+    private var numOfQuestion=0
+    private lateinit var pref: SharedPref
     private var level=""
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityComparisionBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        pref= SharedPref(this)
         binding.biggerThan.text=">"
         binding.smallerThan.text="<"
         binding.equal.text="="
@@ -72,6 +77,11 @@ class ComparisonActivity : AppCompatActivity() {
     }
     private fun checkResult(){
         binding.done.setOnClickListener{
+            if(isItFromSettingTest()){
+                getTheQuestionOnDone(numOfQuestion)
+                finish()
+            }
+            else{
             if(binding.sign.text == comparison.third){
                 Toast.makeText(this,"Correct",Toast.LENGTH_SHORT).show()
                 binding.celeprationAnim.visibility = VISIBLE
@@ -79,6 +89,32 @@ class ComparisonActivity : AppCompatActivity() {
             }
             else{
                 Toast.makeText(this,"Wrong",Toast.LENGTH_SHORT).show()
+            }
+            }
+        }
+    }
+    private fun isItFromSettingTest():Boolean{
+        numOfQuestion = intent.getIntExtra("noOfQuestion",0)
+        return numOfQuestion!=0
+
+    }
+    private fun getTheQuestionOnDone(numOfQuestion:Int){
+        val comparison = TestDecoder.encodeComparison(comparison)
+        setWhichQuestion(comparison,numOfQuestion)
+    }
+    private fun setWhichQuestion(ques:String,numOfQuestion:Int){
+        when(numOfQuestion){
+            1->{
+                pref.setQ1(ques)
+            }
+            2->{
+                pref.setQ2(ques)
+            }
+            3->{
+                pref.setQ3(ques)
+            }
+            4->{
+                pref.setQ4(ques)
             }
         }
     }

@@ -10,9 +10,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.possible.R
 import com.example.possible.databinding.ActivityArithmeticSequenceBinding
 import com.example.possible.repo.local.MathQuestions
+import com.example.possible.repo.local.SharedPref
+import com.example.possible.util.TestDecoder
 
 class ArithmeticSequenceActivity : AppCompatActivity() {
     lateinit var binding: ActivityArithmeticSequenceBinding
+    private var numOfQuestion=0
+    private lateinit var pref: SharedPref
     private var firstResult = 0
     private var secondResult = 0
     private var sequence :List<Int> = emptyList()
@@ -24,6 +28,7 @@ class ArithmeticSequenceActivity : AppCompatActivity() {
         level = intent.getStringExtra("level").toString()
         setContentView(binding.root)
         setSequence(level)
+        pref= SharedPref(this)
         handleDone()
         handleChange()
         binding.backArrowIV.setOnClickListener {
@@ -60,6 +65,11 @@ class ArithmeticSequenceActivity : AppCompatActivity() {
     }
     private fun handleDone(){
         binding.done.setOnClickListener {
+            if(isItFromSettingTest()){
+                getTheQuestionOnDone(numOfQuestion)
+                finish()
+            }
+            else{
             val firstInput = if(binding.fourth.text.toString().isNotEmpty()){
                 binding.fourth.text.toString().toInt()
             } else{
@@ -83,6 +93,7 @@ class ArithmeticSequenceActivity : AppCompatActivity() {
             handleCardBackground(binding.sixth, secondInput == secondResult)
 
         }
+        }
     }
     private fun handleChange(){
         binding.changeQues.setOnClickListener {
@@ -95,4 +106,33 @@ class ArithmeticSequenceActivity : AppCompatActivity() {
             binding.sixth.setBackgroundResource(R.color.white)
         }
     }
+
+    private fun isItFromSettingTest():Boolean{
+        numOfQuestion = intent.getIntExtra("noOfQuestion",0)
+        return numOfQuestion!=0
+
+    }
+
+    private fun getTheQuestionOnDone(numOfQuestion:Int){
+        val sequence = TestDecoder.encodeArithmeticSequence(sequence)
+        setWhichQuestion(sequence,numOfQuestion)
+    }
+    private fun setWhichQuestion(ques:String,numOfQuestion:Int){
+        when(numOfQuestion){
+            1->{
+                pref.setQ1(ques)
+            }
+            2->{
+                pref.setQ2(ques)
+            }
+            3->{
+                pref.setQ3(ques)
+            }
+            4->{
+                pref.setQ4(ques)
+            }
+        }
+    }
+
+
 }

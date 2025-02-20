@@ -9,26 +9,28 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.possible.databinding.ActivityLoginBinding
 import com.example.possible.model.User
+import com.example.possible.repo.local.SharedPref
 import com.example.possible.ui.MainActivity
 import com.example.possible.ui.signLogin.signUp.SignupActivity
-import com.example.possible.util.LoginChecker
+import com.example.possible.ui.specialist.SpecialistMainActivity
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var  binding : ActivityLoginBinding
     private var apiResult = false
     private lateinit var user: User
-    private lateinit var pathOfApp:String
+    private lateinit var pref: SharedPref
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        pref = SharedPref(this)
         setControllers()
 
     }
     private fun setPathOfApp(path:String){
-        pathOfApp=path
+        pref.setPath(path)
         hideTheChoosingViewAndViewTheLoginView()
     }
     private fun hideTheChoosingViewAndViewTheLoginView(){
@@ -55,7 +57,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
     private fun uiLogin(){
-        if(checkIfAllFieldsAreValid()){
             if(resultFromApi()){
                 saveData()
                 goToMainActivity()
@@ -65,31 +66,20 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-
-    }
-    private fun checkIfAllFieldsAreValid():Boolean{
-        var result=true
-        val email=binding.emailET.text.toString()
-        val password=binding.passwordET.text.toString()
-       if(!LoginChecker.isValidEmail(email)){
-           result = false
-           binding.emailET.error = "Invalid Email"
-       }
-       if(!LoginChecker.passwordMoreThan8(password)){
-           result = false
-           binding.passwordET.error = "Password must be more than 8"
-       }
-        if(LoginChecker.isValidEmail(email)&&LoginChecker.passwordMoreThan8(password)){
-            result = true
-        }
-        return result
-    }
     private fun resultFromApi():Boolean{
         apiResult = false
        return apiResult
     }
     private fun goToMainActivity(){
-        startActivity(Intent(this, MainActivity::class.java))
+        if(pref.getPath()=="parent"){
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+        else if(pref.getPath()=="specialist"){
+            startActivity(Intent(this, SpecialistMainActivity::class.java))
+        }
+        finish()
+
+
     }
     private fun saveData(){
         saveLogin(true)

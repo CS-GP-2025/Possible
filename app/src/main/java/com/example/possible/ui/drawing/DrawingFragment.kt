@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.example.possible.databinding.FragmentDrawingBinding
+import com.example.possible.repo.local.LettersAndNumbers
 
 
 class DrawingFragment : Fragment() {
@@ -65,6 +66,7 @@ class DrawingFragment : Fragment() {
             }
             true // Return true to indicate the event was handled
         }
+        binding.letterName.text= setNameOfLetter(arguments?.getString("type")!!,arguments?.getInt("index")!!)
 
         return binding.root
     }
@@ -83,12 +85,20 @@ class DrawingFragment : Fragment() {
         }
         canvas!!.drawLine(
             floatStartX,
-            floatStartY-50,
+            floatStartY-200,
             floatEndX,
-            floatEndY-50 ,
+            floatEndY-200 ,
             paint
         )
         imageView!!.setImageBitmap(bitmap)
+    }
+    private fun setNameOfLetter(type:String,index:Int):String{
+        val name =if(type=="letter"){
+            LettersAndNumbers.letters[index].name
+        }else{
+            LettersAndNumbers.numbers[index].name
+        }
+        return name
     }
 
 }

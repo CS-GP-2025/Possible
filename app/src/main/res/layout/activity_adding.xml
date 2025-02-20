@@ -25,6 +25,7 @@
         android:layout_marginTop="20dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/backArrowIV">
 
@@ -32,12 +33,11 @@
             android:id="@+id/firstNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/font"
             android:layout_gravity="center"
+            android:fontFamily="@font/font"
             android:text="100"
             android:textColor="@color/black"
-            android:textSize="45sp"
-             />
+            android:textSize="45sp" />
 
         <ImageView
             android:id="@+id/sign"
@@ -52,9 +52,9 @@
             android:id="@+id/secondNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="99"
-            android:fontFamily="@font/font"
             android:layout_gravity="center"
+            android:fontFamily="@font/font"
+            android:text="99"
             android:textColor="@color/black"
             android:textSize="45sp" />
 

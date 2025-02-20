@@ -29,6 +29,7 @@ class ProfileActivity : AppCompatActivity() {
         setControllers()
         setContentView(binding.root)
         setView()
+        isSpecialistView()
     }
     private fun setControllers(){
         binding.myAccountLL.setOnClickListener {
@@ -106,6 +107,13 @@ class ProfileActivity : AppCompatActivity() {
         Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
+    }
+    private fun isSpecialistView(){
+        if(sharedPreferences.getPath()=="specialist"){
+            binding.addChildLL.visibility=View.GONE
+            binding.childrenLL.visibility=View.GONE
+            binding.testsLL.visibility=View.GONE
+        }
     }
 
 }
