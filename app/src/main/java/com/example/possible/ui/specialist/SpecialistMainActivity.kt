@@ -5,9 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.possible.R
 import com.example.possible.databinding.ActivitySpecialistMainBinding
 import com.example.possible.repo.local.SharedPref
 import com.example.possible.ui.profile.ProfileActivity
@@ -15,7 +12,6 @@ import com.example.possible.ui.profile.children.AddChildActivity
 import com.example.possible.ui.profile.children.Children
 import com.example.possible.ui.specialist.tests.TestTypesActivity
 import com.example.possible.ui.specialist.tests.TestsActivity
-import com.example.possible.ui.test.TestActivity
 
 class SpecialistMainActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySpecialistMainBinding

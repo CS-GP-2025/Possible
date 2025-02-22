@@ -33,7 +33,7 @@
             android:name=".ui.test.dysgraphiaTest.DysgraphiaTestActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.test.TestActivity"
+            android:name=".ui.test.dyscalculiaTest.DyscalculiaTestActivity"
             android:exported="false" />
         <activity
             android:name=".ui.specialist.tests.SettingTestActivity"

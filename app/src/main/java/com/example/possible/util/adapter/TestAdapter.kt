@@ -1,10 +1,8 @@
-package com.example.possible.ui.specialist.tests
+package com.example.possible.util.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.possible.databinding.TestItemBinding
 import com.example.possible.model.Test

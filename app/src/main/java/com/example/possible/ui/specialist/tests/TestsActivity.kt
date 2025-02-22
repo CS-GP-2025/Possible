@@ -6,14 +6,12 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.possible.R
 import com.example.possible.databinding.ActivityTestsBinding
 import com.example.possible.model.Test
-import com.example.possible.ui.test.TestActivity
+import com.example.possible.ui.test.dyscalculiaTest.DyscalculiaTestActivity
 import com.example.possible.ui.test.dysgraphiaTest.DysgraphiaTestActivity
 import com.example.possible.util.Tests
+import com.example.possible.util.adapter.TestAdapter
 import com.example.possible.util.listener.TestListener
 
 class TestsActivity : AppCompatActivity() , TestListener {
@@ -53,7 +51,7 @@ class TestsActivity : AppCompatActivity() , TestListener {
             startActivity(intent)
         }
         else{
-            val intent = Intent(this, TestActivity::class.java)
+            val intent = Intent(this, DyscalculiaTestActivity::class.java)
             intent.putExtra("test",position)
             startActivity(intent)
         }
