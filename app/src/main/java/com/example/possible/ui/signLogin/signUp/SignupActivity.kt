@@ -61,7 +61,7 @@ class SignupActivity : AppCompatActivity() {
 
     private fun onSignUp() {
             if(checkForApiConditions()){
-                saveData(
+               saveData(
                     binding.name.text.toString(),
                     binding.emailET.text.toString(),
                     binding.passwordET.text.toString()

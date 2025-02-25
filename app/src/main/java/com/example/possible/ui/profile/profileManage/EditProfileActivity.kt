@@ -1,4 +1,4 @@
-package com.example.possible.ui.profile
+package com.example.possible.ui.profile.profileManage
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.READ_MEDIA_IMAGES

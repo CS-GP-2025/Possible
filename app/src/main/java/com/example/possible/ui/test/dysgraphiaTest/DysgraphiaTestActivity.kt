@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.possible.R
 import com.example.possible.databinding.ActivityDysgraphiaTestBinding
 import com.example.possible.model.Question
@@ -15,6 +16,15 @@ import com.example.possible.ui.test.dyscalculiaTest.ComparisonFragment
 import com.example.possible.ui.tracing.TracingFragment
 import com.example.possible.util.TestDecoder
 import com.example.possible.util.Tests
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
+import kotlinx.coroutines.withContext
+
 class DysgraphiaTestActivity : AppCompatActivity() {
     private lateinit var fragments: MutableList<Fragment?>
     private lateinit var binding: ActivityDysgraphiaTestBinding
@@ -50,8 +60,12 @@ class DysgraphiaTestActivity : AppCompatActivity() {
             }
         }
         binding.viewResult.setOnClickListener {
-            result = calcTheResult()
-            binding.result.text = result.toString()
+            lifecycleScope.launch {
+                result = calcTheResult()
+                withContext(Dispatchers.Main){
+                    binding.result.text = result.toString()
+                }
+            }
         }
 
         // Previous button click listener
@@ -110,31 +124,36 @@ class DysgraphiaTestActivity : AppCompatActivity() {
             else -> throw IllegalArgumentException("Unsupported question type")
         }
     }
-
-    private fun calcTheResult(): Int {
+    private suspend fun calcTheResult(): Int {
         if (fragments.isEmpty()) {
             return 0
         }
+
         var result = 0
-        fragments.forEach { fragment ->
+
+        for (fragment in fragments) {
             when (fragment) {
                 is TracingFragment -> {
                     result += fragment.getResultsForTest()
                 }
                 is DrawingFragment -> {
-                    result += 2
+                    if (fragment.getResult()) {
+                        result += 2
+                    }
                 }
-
                 is SentenceCompletingFragment -> {
                     result += fragment.returnResult()
                 }
-
                 is SentenceCombiningFragment -> {
                     result += fragment.returnResult()
                 }
             }
-            }
+        }
+
         return result
     }
+
+
+
 }
 

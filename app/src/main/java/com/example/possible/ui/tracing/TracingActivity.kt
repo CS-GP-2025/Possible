@@ -34,11 +34,6 @@ class TracingActivity : AppCompatActivity() {
 
 
         binding.doneButton.setOnClickListener{
-            if(isItFromSettingTest()){
-                getTheQuestionOnDone(numOfQuestion)
-                finish()
-            }
-            else{
             pathsOfNumber=fragment.getResult().first
             ofCompletedPaths=fragment.getResult().second
             if(pathsOfNumber==ofCompletedPaths){
@@ -49,7 +44,7 @@ class TracingActivity : AppCompatActivity() {
             }
             else{
                 Toast.makeText(this, "Continue", Toast.LENGTH_SHORT).show()
-            }}
+            }
         }
 
         binding.nextBtn.setOnClickListener {
@@ -111,31 +106,5 @@ class TracingActivity : AppCompatActivity() {
         loadProfileImage()
         val name=pref.getProfileDetails().getName()
         binding.userNameTV.text=name
-    }
-    private fun isItFromSettingTest():Boolean{
-        numOfQuestion = intent.getIntExtra("noOfQuestion",0)
-        return numOfQuestion!=0
-
-    }
-
-    private fun getTheQuestionOnDone(numOfQuestion:Int){
-        val ques = TestDecoder.encodeLetterOrNumber(index,type,"beginner")
-        setWhichQuestion(ques,numOfQuestion)
-    }
-    private fun setWhichQuestion(ques:String,numOfQuestion:Int){
-        when(numOfQuestion){
-            1->{
-                pref.setQ1(ques)
-            }
-            2->{
-                pref.setQ2(ques)
-            }
-            3->{
-                pref.setQ3(ques)
-            }
-            4->{
-                pref.setQ4(ques)
-            }
-        }
     }
 }

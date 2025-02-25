@@ -13,6 +13,7 @@ import com.example.possible.repo.local.SharedPref
 import com.example.possible.ui.profile.children.AddChildActivity
 import com.example.possible.ui.profile.children.Children
 import com.example.possible.ui.profile.children.ChildrenTests
+import com.example.possible.ui.profile.profileManage.EditProfileActivity
 import com.example.possible.ui.signLogin.Login.LoginActivity
 
 

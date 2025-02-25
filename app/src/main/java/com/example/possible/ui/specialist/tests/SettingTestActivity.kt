@@ -14,6 +14,7 @@ import com.example.possible.model.Question
 import com.example.possible.model.Test
 import com.example.possible.repo.local.LettersAndNumbers
 import com.example.possible.repo.local.SharedPref
+import com.example.possible.ui.LettersNumbersActivity
 import com.example.possible.ui.drawing.DrawingActivity
 import com.example.possible.ui.math.AddingActivity
 import com.example.possible.ui.math.ArithmeticSequenceActivity
@@ -145,11 +146,12 @@ class SettingTestActivity : AppCompatActivity() {
 
     // Selects a random letter or number for tracing or drawing activity
     private fun setRandomLetterOrNumber(type: String, numOfQuestion: Int) {
-        val index = if (type == "letter") LettersAndNumbers.letters.indices.random() else LettersAndNumbers.numbers.indices.random()
-        val intent = if (level == "beginner") Intent(this, TracingActivity::class.java) else Intent(this, DrawingActivity::class.java)
-        intent.putExtra("letterIndex", index)
+        val intent =  Intent(this,LettersNumbersActivity::class.java)
+        val result = if (type == "letter") "letters" else "numbers"
+        intent.putExtra("result", result)
         intent.putExtra("type", type)
         intent.putExtra("noOfQuestion", numOfQuestion)
+        intent.putExtra("level", level)
         startActivity(intent)
     }
 

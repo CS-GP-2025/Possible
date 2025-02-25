@@ -76,4 +76,10 @@ dependencies {
     implementation ("com.tbuonomo:dotsindicator:4.3")
 
 
+    //Retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0") // Retrofit
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0") // Gson Converter (لتحويل JSON إلى كائنات Java/Kotlin)
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3") // OkHttp Logging Interceptor (اختياري، لتسجيل طلبات الشبكة)
+
+
 }

@@ -56,8 +56,8 @@
                 android:text="A"
                 android:textSize="30sp" />
         </LinearLayout>
-        <ImageView
-            android:id="@+id/bitmap"
+        <com.example.possible.util.helper.Drawer
+            android:id="@+id/drawer"
             android:layout_width="match_parent"
             android:src="#00FFFFFF"
             android:layout_height="match_parent"

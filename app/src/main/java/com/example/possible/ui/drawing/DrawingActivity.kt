@@ -2,19 +2,23 @@ package com.example.possible.ui.drawing
 
 import android.net.Uri
 import android.os.Bundle
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.possible.databinding.ActivityDrawingBinding
+import com.example.possible.repo.local.LettersAndNumbers
 import com.example.possible.repo.local.SharedPref
-import com.example.possible.util.TestDecoder
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class DrawingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDrawingBinding
     private lateinit var fragment: DrawingFragment
     private lateinit var pref:SharedPref
-    private var numOfQuestion=0
-    private var level="pro"
     private var index=0
     private var type=""
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,18 +36,58 @@ class DrawingActivity : AppCompatActivity() {
             finish()
         }
         binding.doneButton.setOnClickListener {
-            if(isItFromSettingTest()){
-                getTheQuestionOnDone(numOfQuestion)
-                finish()
-            }
-            else{
-                finish()
-            }
+                lifecycleScope.launch {
+                    if(fragment.getResult()){
+                        binding.celeprationView.visibility= VISIBLE
+                        binding.celeprationAnim.playAnimation()
+                        binding.doneButton.isEnabled=false
+                        Toast.makeText(this@DrawingActivity, "Correct", Toast.LENGTH_SHORT).show()                    }
+                    else{
+                        Toast.makeText(this@DrawingActivity, "Wrong Try Again", Toast.LENGTH_SHORT).show()
+                        delay(2000)
+                        fragment.reset()
+                    }
+                }
+
+        }
+        binding.nextBtn.setOnClickListener {
+            handleNext()
         }
 
 
         setContentView(binding.root)
 
+    }
+
+
+    private fun handleNext(){
+        if(type=="letter"){
+            if(index!= LettersAndNumbers.letters.size-1){
+                //go to next letter
+                setNextData(index +1,"letter")
+            }
+            else{
+                this.finish()
+            }
+        }
+        else{
+            if(index!= LettersAndNumbers.numbers.size-1){
+                //go to next number
+                    setNextData(index+1,"number")
+            }
+        }
+    }
+    private fun setNextData(index:Int, type:String){
+        this.index=index
+        this.type=type
+        binding.nextBtn.isEnabled=false
+        binding.nextBtn.postDelayed({
+            binding.nextBtn.isEnabled=true}
+            ,1000)
+        binding.celeprationView.visibility= GONE
+        binding.doneButton.isEnabled=true
+        fragment= DrawingFragment().getInstance(index,type)
+        setFrame(fragment)
     }
 
     private fun setFrame(fragment: Fragment){
@@ -65,29 +109,5 @@ class DrawingActivity : AppCompatActivity() {
         val user=pref.getProfileDetails()
         binding.userNameTV.text=user.getName()
     }
-    private fun isItFromSettingTest():Boolean{
-        numOfQuestion = intent.getIntExtra("noOfQuestion",0)
-        return numOfQuestion!=0
 
-    }
-    private fun getTheQuestionOnDone(numOfQuestion:Int){
-        val ques = TestDecoder.encodeLetterOrNumber(index,type,level)
-        setWhichQuestion(ques,numOfQuestion)
-    }
-    private fun setWhichQuestion(ques:String,numOfQuestion:Int){
-        when(numOfQuestion){
-            1->{
-                pref.setQ1(ques)
-            }
-            2->{
-                pref.setQ2(ques)
-            }
-            3->{
-                pref.setQ3(ques)
-            }
-            4->{
-                pref.setQ4(ques)
-            }
-        }
-    }
 }
