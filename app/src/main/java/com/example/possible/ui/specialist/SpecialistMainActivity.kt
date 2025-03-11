@@ -62,15 +62,7 @@ class SpecialistMainActivity : AppCompatActivity() {
         val intent = Intent(this, ProfileActivity::class.java)
         startActivity(intent)
     }
-    /*private fun loadProfileDetails() {
-        val savedUri = pref.getImage()
-        if (savedUri != null) {
-            val uri = Uri.parse(savedUri)
-            binding.profileIV.setImageURI(uri)
-        }
-        val userName = pref.getProfileDetails().getName()
-        binding.userNameTV.text=userName
-    }*/
+
     override fun onResume() {
         super.onResume()
         binding.userNameTV.text=pref.getProfileDetails().name
