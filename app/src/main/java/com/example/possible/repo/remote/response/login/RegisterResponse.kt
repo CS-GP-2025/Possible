@@ -1,10 +1,13 @@
 package com.example.possible.repo.remote.response.login
 
-import com.google.gson.annotations.SerializedName
-
 data class RegisterResponse(
-    @SerializedName("success")
-    val success: Boolean,
-    @SerializedName("message")
-    val message: String
+    val token: String,
+    val expiration: String,
+    val userId: String,
+    val userName: String,
+    val email: String,
+    val image: String,
+    val roles: List<String>
 )
+
+

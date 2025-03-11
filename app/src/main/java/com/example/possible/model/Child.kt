@@ -13,5 +13,12 @@ data class Child(
     val imageUri: String,
     val gender: String,
     val disease: String,
-    val difficulty: String
+    val difficulty: String,
+    val readingRate: Int,
+    val writingRate: Int,
+    val readingDays :Int,
+    val writingDays :Int,
+    val latestReadingDay:String,
+    val latestWritingDay:String,
+    val date:String
 )

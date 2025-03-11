@@ -21,4 +21,29 @@ interface ChildDao {
 
     @Update
     suspend fun editChild(child: Child)
+
+
+
+    //Report Queries
+
+
+    //rates update
+    @Query("UPDATE children SET readingRate = :readingRate WHERE id = :childId")
+    suspend fun updateReadingRate(childId: Int, readingRate: Int)
+    @Query("UPDATE children SET writingRate = :writingRate WHERE id = :childId")
+    suspend fun updateWritingRate(childId: Int, writingRate: Int)
+
+    //days update
+    @Query("UPDATE children SET readingDays = :readingDays WHERE id = :childId")
+    suspend fun updateReadingDays(childId: Int, readingDays: Int)
+    @Query("UPDATE children SET writingDays = :writingDays WHERE id = :childId")
+    suspend fun updateWritingDays(childId: Int, writingDays: Int)
+
+    //latest update
+    @Query("UPDATE children SET latestReadingDay = :latestReadingDay WHERE id = :childId")
+    suspend fun updateLatestReadingDay(childId: Int, latestReadingDay: String)
+    @Query("UPDATE children SET latestWritingDay = :latestWritingDay WHERE id = :childId")
+    suspend fun updateLatestWritingDay(childId: Int, latestWritingDay: String)
+
+
 }

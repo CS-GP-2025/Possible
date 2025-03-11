@@ -9,13 +9,24 @@ import android.text.style.ForegroundColorSpan
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.possible.databinding.ActivityReadingResultBinding
+import com.example.possible.repo.local.database.LocalRepoImp
+import com.example.possible.util.helper.ChildTraker
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ReadingResult : AppCompatActivity() {
     private lateinit var binding: ActivityReadingResultBinding
+    private var counter=0
+    private var numberOfWords=0
+    private lateinit var db: LocalRepoImp
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        db = LocalRepoImp(this)
        binding = ActivityReadingResultBinding.inflate(layoutInflater)
         //get the result of the reading
         val actualText = intent.getStringExtra("actualText")!!
@@ -43,8 +54,8 @@ class ReadingResult : AppCompatActivity() {
     private fun getResult(text: String, actualWords:String){
         val wordsToCheck = text.split(" ") // Split the text into words
         val correctWords=actualWords.split(" ")
-        val numberOfWords=correctWords.size
-        var counter=0
+        numberOfWords=correctWords.size
+        counter=0
 
         val range= minOf(wordsToCheck.size,correctWords.size)
         // Create a SpannableString
@@ -78,9 +89,33 @@ class ReadingResult : AppCompatActivity() {
 
             startIndex = endIndex + 1 // Move to the next word (including space)
         }
+
         binding.yourResult.text= "$counter"
         binding.wordsNumber.text= "$numberOfWords"
         // Set the SpannableString to the TextView
         binding.textOfResult.text=spannableString
         }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        updateReadingRate()
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun updateReadingRate() {
+        ChildTraker.setReadingRate(counter.toFloat(),numberOfWords.toFloat())
+        val newRate = ChildTraker.getReadingRate()
+        val id = ChildTraker.getChildId()
+        GlobalScope.launch {
+            db.updateReadingRate(id,newRate)
+            val readingDays = db.getChildById(id).readingDays
+            val latestSelecting = db.getChildById(id).latestReadingDay
+            if(ChildTraker.isAnotherDay(latestSelecting)){
+                //update the reading days ++
+                db.updateReadingDays(id,readingDays+1)
+                //update the latest reading day
+                db.updateLatestReadingDay(id,ChildTraker.getCurrentDate())
+            }
+        }
+    }
 }

@@ -13,43 +13,44 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewModelProvider
 import com.example.possible.databinding.ActivityEditProfileBinding
 import com.example.possible.repo.local.SharedPref
+import com.example.possible.ui.signLogin.Login.LoginViewModel
+import com.example.possible.util.helper.dataFormater.DataFormater
+import com.example.possible.util.helper.dataManager.AppDataManager
+import java.io.File
 
 class EditProfileActivity : AppCompatActivity() {
 
    private companion object {
         const val GALLERY_REQUEST_CODE = 101
-        const val PREF_NAME = "ProfilePreferences"
-        const val IMAGE_URI_KEY = "profileImageUri"
-    }
+   }
+    private var imageUriString: String? = null
 
     private lateinit var binding: ActivityEditProfileBinding
     private lateinit var sharedPreferences: SharedPref
+    private lateinit var viewModel: EditProfileViewModel
+    private lateinit var viewModelL: LoginViewModel
 
     @SuppressLint("IntentReset")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPreferences = SharedPref(this)
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
          checkAndRequestPermissions()
-        // إعداد SharedPreferences
-        sharedPreferences = SharedPref(this)
+        viewModel = ViewModelProvider(this)[EditProfileViewModel::class.java]
+        viewModelL = ViewModelProvider(this)[LoginViewModel::class.java]
+        imageUriString = getCurrentImageUri()
         val user=sharedPreferences.getProfileDetails()
-        binding.nameET.setText(user.getName())
-        binding.emailET.setText(user.getEmail())
-        binding.passwordET.setText(user.getPassword())
+        binding.name.setText(user.name)
+        binding.emailET.setText(user.email)
+        binding.passwordET.setText(user.password)
 
-        // تحميل الصورة المحفوظة (لو موجودة)
-        loadProfileImage()
+        AppDataManager.viewProfileImage(binding.profileImage,sharedPreferences,this)
         setControllers()
-        binding.chooseImage.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            intent.type = "image/*"
-            startActivityForResult(intent, GALLERY_REQUEST_CODE)
-            animateBtn(binding.chooseImage)
-        }
-        // زر اختيار الصورة
+
 
 
     }
@@ -97,38 +98,51 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     private fun saveProfileImageUri(uri: String) {
-        sharedPreferences.setImage(uri)
+        imageUriString =uri
     }
+    @SuppressLint("IntentReset")
     private fun setControllers(){
         binding.backArrowIV.setOnClickListener{
             finish()
         }
-        binding.editBtn.setOnClickListener{
-            val name=binding.nameET.text.toString()
+        binding.edit.setOnClickListener{
+            val name=binding.name.text.toString()
             val email=binding.emailET.text.toString()
             val password=binding.passwordET.text.toString()
-            sharedPreferences.setProfileData(name,email,password,true)
-            animateBtn(binding.editBtn)
-            Toast.makeText(this, "Edited", Toast.LENGTH_SHORT).show()
+            val imageFile = DataFormater.uriToFile(this,imageUriString!!)!!
+            val roleNumber = AppDataManager.getRoleForApi(sharedPreferences)
+            viewModel.update(name,email,password,roleNumber,imageFile,this,binding){
+                onProfileUpdateSuccess()
+            }
+            animateBtn(binding.edit)
 
         }
+        binding.chooseImage.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            intent.type = "image/*"
+            startActivityForResult(intent, GALLERY_REQUEST_CODE)
+            animateBtn(binding.chooseImage)
+        }
+    }
+    private fun onProfileUpdateSuccess() {
+      loginToStoreTheNewData()
     }
 
-    private fun loadProfileImage() {
-        val savedUri = sharedPreferences.getImage()
-        if (savedUri != null) {
-            val uri = Uri.parse(savedUri)
-            binding.profileImage.setImageURI(uri)
-        }}
-
-    override fun onResume() {
-        super.onResume()
-        loadProfileImage()
+    private fun loginToStoreTheNewData() {
+        val email=binding.emailET.text.toString()
+        val password=binding.passwordET.text.toString()
+        viewModelL.loginBehindUpdate(email,password,this,binding)
     }
+
+
     private fun animateBtn(b:View){
         b.animate().scaleY(1.2f).scaleX(1.2f).setDuration(150).withEndAction{
             b.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
         }.start()
 
+    }
+    private fun getCurrentImageUri():String{
+        val imageUri = Uri.fromFile(File(sharedPreferences.getProfileDetails().imagePath)).toString()
+        return imageUri
     }
 }

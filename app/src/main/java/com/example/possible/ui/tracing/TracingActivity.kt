@@ -1,5 +1,4 @@
 package com.example.possible.ui.tracing
-import android.net.Uri
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -10,7 +9,7 @@ import androidx.fragment.app.Fragment
 import com.example.possible.databinding.ActivityTracingBinding
 import com.example.possible.repo.local.LettersAndNumbers
 import com.example.possible.repo.local.SharedPref
-import com.example.possible.util.TestDecoder
+import com.example.possible.util.helper.dataManager.AppDataManager
 
 class TracingActivity : AppCompatActivity() {
     private var index=0
@@ -40,10 +39,11 @@ class TracingActivity : AppCompatActivity() {
                 binding.celeprationView.visibility=VISIBLE
                 binding.celeprationAnim.playAnimation()
                 binding.doneButton.isEnabled=false
-                Toast.makeText(this, "Correct", Toast.LENGTH_SHORT).show()
             }
             else{
-                Toast.makeText(this, "Continue", Toast.LENGTH_SHORT).show()
+                DialogBuilder.showErrorDialog(this@TracingActivity ,
+                    "You have not completed all the paths !"
+                ,"Continue")
             }
         }
 
@@ -94,17 +94,11 @@ class TracingActivity : AppCompatActivity() {
             .replace(binding.frameDrawer.id,fragment)
             .commit()
     }
-    private fun loadProfileImage() {
-        val savedUri = pref.getImage()
-        if (savedUri != null) {
-            val uri = Uri.parse(savedUri)
-            binding.profileIV.setImageURI(uri)
-        }}
 
     override fun onResume() {
         super.onResume()
-        loadProfileImage()
-        val name=pref.getProfileDetails().getName()
+        AppDataManager.viewProfileImage(binding.profileIV,pref,this)
+        val name=pref.getProfileDetails().name
         binding.userNameTV.text=name
     }
 }

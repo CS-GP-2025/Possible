@@ -15,11 +15,14 @@ import com.example.possible.R
 import com.example.possible.databinding.ActivityAddChildBinding
 import com.example.possible.model.Child
 import com.example.possible.repo.local.database.LocalRepoImp
+import com.example.possible.ui.report.ReportActivity
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class AddChildActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddChildBinding
@@ -30,6 +33,13 @@ class AddChildActivity : AppCompatActivity() {
     private var imageUri: Uri? = null
     private var difficulty = ""
     private var disease = ""
+    private var readingRate = 0
+    private var writingRate = 0
+    private var latestReadingDay = ""
+    private var latestWritingDay = ""
+    private var readingDays = 0
+    private var writingDays = 0
+    private var dateOfCreation = ""
    // private val ADD_MODE = "add"
     private val EDIT_MODE = "edit"
     private var mode = ""
@@ -82,6 +92,12 @@ class AddChildActivity : AppCompatActivity() {
             }
 
         }
+        binding.report.setOnClickListener {
+            val intent = Intent(this, ReportActivity::class.java)
+            intent.putExtra("childId", childId)
+            startActivity(intent)
+        }
+
         binding.backArrowIV.setOnClickListener { finish() }
         setupImagePicker()
     }
@@ -196,7 +212,7 @@ class AddChildActivity : AppCompatActivity() {
     }
     private fun updateChild() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val updatedChild = Child(childId, name, age, imageUri.toString(), gender, disease, difficulty)
+            val updatedChild = Child(childId, name, age, imageUri.toString(), gender, disease, difficulty, readingRate, writingRate,readingDays,writingDays,latestReadingDay,latestWritingDay,dateOfCreation)
              db.updateChild(updatedChild)
     }
     }
@@ -213,10 +229,20 @@ class AddChildActivity : AppCompatActivity() {
                     gender = child!!.gender
                     disease = child!!.disease
                     difficulty = child!!.difficulty
+                    readingRate = child!!.readingRate
+                    writingRate = child!!.writingRate
+                    readingDays = child!!.readingDays
+                    writingDays = child!!.writingDays
+                    latestReadingDay = child!!.latestReadingDay
+                    latestWritingDay = child!!.latestWritingDay
+                    dateOfCreation = child!!.date
                     ///////////SET_VIEW////////////////
                     binding.difficultyLL.visibility = android.view.View.VISIBLE
+                    binding.report.visibility = android.view.View.VISIBLE
                     binding.doneBtn.text="Update"
                     binding.name.setText(child!!.name)
+                    readingRate = child!!.readingRate
+                    writingRate = child!!.writingRate
                     binding.profileIV.setImageURI(Uri.parse(child!!.imageUri))
                     binding.agePicker.value = child!!.age
                     if (child!!.gender == "Female") {
@@ -235,12 +261,17 @@ class AddChildActivity : AppCompatActivity() {
     private fun saveChild() {
         GlobalScope.launch(Dispatchers.IO) {
             val imageUriString = imageUri.toString()
-            val newChild = Child(0, name, age, imageUriString,gender, disease, difficulty )
+            val newChild = Child(0, name, age, imageUriString,gender, disease, difficulty,0,0,0,0,"","",returnDate() )
             db.insertChild(newChild)
             withContext(Dispatchers.Main) {
                 Toast.makeText(this@AddChildActivity, "Child added successfully", Toast.LENGTH_SHORT).show()
             }
         }
     }
+  private fun returnDate(): String {
+      val currentDate = LocalDateTime.now()
+      val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+      return formattedDate
+  }
 
 }

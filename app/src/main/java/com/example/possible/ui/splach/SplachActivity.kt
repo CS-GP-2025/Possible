@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.possible.databinding.ActivitySplachBinding
 import com.example.possible.repo.local.SharedPref
 import com.example.possible.ui.MainActivity
+import com.example.possible.ui.profile.children.Children
 import com.example.possible.ui.signLogin.Login.LoginActivity
 import com.example.possible.ui.specialist.SpecialistMainActivity
 
@@ -119,10 +120,12 @@ class SplachActivity : AppCompatActivity(){
 
     }
     private fun goToMainActivity() {
-        if(pref.getPath()=="parent"){
-            startActivity(Intent(this, MainActivity::class.java))
+        if(pref.getRole()=="User"){
+            val intent = Intent(this, Children::class.java)
+            intent.putExtra("mode", "select")
+            startActivity(intent)
         }
-        else if(pref.getPath()=="specialist"){
+        else if(pref.getRole()=="Specialist"){
             startActivity(Intent(this, SpecialistMainActivity::class.java))
         }
         finish()
@@ -133,7 +136,7 @@ class SplachActivity : AppCompatActivity(){
         finish()
     }
     private fun isLogin():Boolean{
-        return pref.getLogin()
+        return (pref.getToken()!!.isNotEmpty())
     }
 
 

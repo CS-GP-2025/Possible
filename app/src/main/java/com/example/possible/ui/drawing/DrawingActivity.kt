@@ -1,6 +1,5 @@
 package com.example.possible.ui.drawing
-
-import android.net.Uri
+import DialogBuilder
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -10,21 +9,34 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.possible.databinding.ActivityDrawingBinding
+import com.example.possible.model.Child
 import com.example.possible.repo.local.LettersAndNumbers
 import com.example.possible.repo.local.SharedPref
+import com.example.possible.repo.local.database.LocalRepoImp
+import com.example.possible.util.helper.ChildTraker
+import com.example.possible.util.helper.dataManager.AppDataManager
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DrawingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDrawingBinding
     private lateinit var fragment: DrawingFragment
     private lateinit var pref:SharedPref
+    private var child : Child?=null
     private var index=0
     private var type=""
+    private lateinit var db: LocalRepoImp
+    private var points = 100
+    private var solved=false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         pref=SharedPref(this)
+        db = LocalRepoImp(this)
         binding = ActivityDrawingBinding.inflate(layoutInflater)
         //get the data from the previos
         index=intent.extras?.getInt("letterIndex",0)!!
@@ -36,22 +48,43 @@ class DrawingActivity : AppCompatActivity() {
             finish()
         }
         binding.doneButton.setOnClickListener {
+            binding.loadingView.visibility= VISIBLE
                 lifecycleScope.launch {
                     if(fragment.getResult()){
                         binding.celeprationView.visibility= VISIBLE
                         binding.celeprationAnim.playAnimation()
                         binding.doneButton.isEnabled=false
-                        Toast.makeText(this@DrawingActivity, "Correct", Toast.LENGTH_SHORT).show()                    }
+                        child = db.getChildById(ChildTraker.getChildId())
+                        val latestSelecting = child!!.latestWritingDay
+                        ChildTraker.setWritingRateOfTries(points)
+                        withContext(Dispatchers.Main){
+                        }
+                        //get the new rate and assign it
+                        val newWritingRate = ChildTraker.getWritingRate()
+                        db.updateWritingRate(ChildTraker.getChildId(), newWritingRate)
+
+                        //update the writing days and latest writing day
+                        if (ChildTraker.isAnotherDay(latestSelecting)){
+                            db.updateWritingDays(ChildTraker.getChildId(),child!!.writingDays+1)
+                            db.updateLatestWritingDay(ChildTraker.getChildId(),ChildTraker.getCurrentDate())}
+                        solved = true
+                    }
                     else{
-                        Toast.makeText(this@DrawingActivity, "Wrong Try Again", Toast.LENGTH_SHORT).show()
-                        delay(2000)
+                        DialogBuilder.showErrorDialog(this@DrawingActivity ,
+                            "Wrong shape try again !"
+                        ,"Try again")
+                        decreasePoints()
                         fragment.reset()
                     }
+                    binding.loadingView.visibility= GONE
+
                 }
 
         }
         binding.nextBtn.setOnClickListener {
             handleNext()
+            points = 100
+            solved = false
         }
 
 
@@ -96,18 +129,39 @@ class DrawingActivity : AppCompatActivity() {
             .commit()
     }
 
-    private fun loadProfileImage() {
-        val savedUri = pref.getImage()
-        if (savedUri != null) {
-            val uri = Uri.parse(savedUri)
-            binding.profileIV.setImageURI(uri)
-        }}
-
     override fun onResume() {
         super.onResume()
-        loadProfileImage()
+        AppDataManager.viewProfileImage(binding.profileIV,pref,this)
         val user=pref.getProfileDetails()
-        binding.userNameTV.text=user.getName()
+        binding.userNameTV.text=user.name
     }
+
+    private fun decreasePoints(){
+        var newPoints = points
+        newPoints -= 10
+        if (newPoints <=10) {
+            newPoints = 10
+        }
+        points = newPoints
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    override fun onDestroy() {
+        super.onDestroy()
+        if(!solved){
+        GlobalScope.launch {
+            child = db.getChildById(ChildTraker.getChildId())
+            val latestSelecting = child!!.latestWritingDay
+            val newWritingRate = child!!.writingRate
+            db.updateWritingRate(ChildTraker.getChildId(), newWritingRate)
+            //update the writing days and latest writing day
+            if (ChildTraker.isAnotherDay(latestSelecting)) {
+                db.updateWritingDays(ChildTraker.getChildId(), child!!.writingDays + 1)
+                db.updateLatestWritingDay(ChildTraker.getChildId(), ChildTraker.getCurrentDate())
+            }
+        }   }
+    }
+
+
 
 }

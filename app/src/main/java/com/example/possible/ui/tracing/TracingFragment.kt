@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.possible.databinding.FragmentTracingBinding
 import com.example.possible.repo.local.LettersAndNumbers
@@ -55,14 +54,7 @@ class TracingFragment : Fragment() {
               LettersAndNumbers.numbers[index].name}
       }
         binding.TracingView.setNewPathArray(paths,tracingName)
-        Toast.makeText(requireContext(), "index $index : $tracingName", Toast.LENGTH_SHORT).show()
-        //binding.TracingView.getInstance(paths)
 
-        //set background
-       // val bg=this.arguments?.getInt("fragmentBg",R.drawable.a_draw)
-        //imageView=binding.imageView
-       // binding.beginnerDrawFragmentContainer.setBackgroundResource(bg!!)
-        /**/
        binding.letterName.text = tracingName
 
         return binding.root

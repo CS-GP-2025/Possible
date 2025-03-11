@@ -39,4 +39,40 @@ class LocalRepoImp(context: Context):LocalRepo {
 
         }
     }
+
+    override suspend fun updateReadingRate(childId: Int, readingRate: Int) {
+        withContext(Dispatchers.IO){
+            db.childDao().updateReadingRate(childId,readingRate)
+        }
+    }
+
+    override suspend fun updateWritingRate(childId: Int, writingRate: Int) {
+        withContext(Dispatchers.IO){
+            db.childDao().updateWritingRate(childId,writingRate)
+        }
+    }
+
+    override suspend fun updateReadingDays(childId: Int, readingDays: Int) {
+        withContext(Dispatchers.IO){
+            db.childDao().updateReadingDays(childId,readingDays)
+        }
+    }
+    override suspend fun updateWritingDays(childId: Int, writingDays: Int) {
+        withContext(Dispatchers.IO){
+            db.childDao().updateWritingDays(childId,writingDays)
+        }
+    }
+
+
+    override suspend fun updateLatestReadingDay(childId: Int, latestReadingDay: String) {
+        withContext(Dispatchers.IO){
+            db.childDao().updateLatestReadingDay(childId,latestReadingDay)
+        }
+    }
+
+    override suspend fun updateLatestWritingDay(childId: Int, latestWritingDay: String) {
+        withContext(Dispatchers.IO){
+            db.childDao().updateLatestWritingDay(childId,latestWritingDay)
+        }
+    }
 }

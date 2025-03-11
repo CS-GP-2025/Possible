@@ -4,21 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.possible.databinding.ActivityLoginBinding
-import com.example.possible.model.User
 import com.example.possible.repo.local.SharedPref
-import com.example.possible.ui.MainActivity
+import com.example.possible.ui.profile.children.Children
 import com.example.possible.ui.signLogin.signUp.SignupActivity
 import com.example.possible.ui.specialist.SpecialistMainActivity
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var  binding : ActivityLoginBinding
-    private var apiResult = false
-    private lateinit var user: User
+    private lateinit var viewModel: LoginViewModel
     private lateinit var pref: SharedPref
+    lateinit var email: String
+    lateinit var password: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,72 +26,59 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         pref = SharedPref(this)
+        viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         setControllers()
 
     }
     private fun setPathOfApp(path:String){
-        pref.setPath(path)
+        pref.setRole(path)
         hideTheChoosingViewAndViewTheLoginView()
     }
     private fun hideTheChoosingViewAndViewTheLoginView(){
-        binding.loginView.visibility = VISIBLE
+        try {
+            binding.loginView.visibility = VISIBLE
+        } catch (e: Exception) {
+            TODO("Not yet implemented")
+        }
         binding.loginView.animate().scaleX(0f).scaleY(0f).setDuration(0).start()
         binding.chooseParentOrSpecialist.animate().scaleX(0f).scaleY(0f).setDuration(300).withEndAction{
             binding.loginView.animate().scaleX(1f).scaleY(1f).setDuration(300).start()
             binding.chooseParentOrSpecialist.visibility = GONE
         }.start()
     }
-    private fun setControllers(){
+    private fun setControllers() {
         binding.signup.setOnClickListener {
             startActivity(Intent(this, SignupActivity::class.java))
         }
         binding.loginBtn.setOnClickListener {
-           uiLogin()
+            email = binding.emailET.text.toString()
+            password = binding.passwordET.text.toString()
+            resultFromApi()
         }
         binding.chooseParentBtn.setOnClickListener {
-            setPathOfApp("parent")
+            setPathOfApp("User")
 
         }
         binding.chooseSpecialistBtn.setOnClickListener {
-            setPathOfApp("specialist")
+            setPathOfApp("Specialist")
         }
     }
-    private fun uiLogin(){
-            if(resultFromApi()){
-                saveData()
-                goToMainActivity()
-            }
-            else{
-                Toast.makeText(this, "You have not any account you can signup", Toast.LENGTH_SHORT).show()
-            }
-        }
 
-    private fun resultFromApi():Boolean{
-        apiResult = false
-       return apiResult
-    }
-    private fun goToMainActivity(){
-        if(pref.getPath()=="parent"){
-            startActivity(Intent(this, MainActivity::class.java))
+    private fun resultFromApi(){
+        viewModel.loginUserSync(email = email, password = password, bind = binding, context = this){
+            goToMainActivity()
+            finish()
         }
-        else if(pref.getPath()=="specialist"){
+    }
+
+    private fun goToMainActivity() {
+        if (pref.getRole() == "User") {
+            val intent = Intent(this, Children::class.java)
+            intent.putExtra("mode", "select")
+            startActivity(intent)
+        } else if (pref.getRole() == "Specialist") {
             startActivity(Intent(this, SpecialistMainActivity::class.java))
         }
-        finish()
 
 
-    }
-    private fun saveData(){
-        saveLogin(true)
-        saveUser("","","","")
-
-    }
-    private fun saveLogin(login:Boolean){
-
-    }
-    private fun saveUser(image:String,name:String,email:String,password:String) {
-
-    }
-
-
-}
+    }}

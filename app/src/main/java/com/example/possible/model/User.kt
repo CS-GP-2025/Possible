@@ -1,19 +1,12 @@
 package com.example.possible.model
 
-class User(
-    private var name: String,
-    private var login:Boolean,
-    private var avatarUrl: String,
-    private var email: String,
-    private var password: String
-) {
-    fun getName(): String {
-        return name
-    }
-    fun getEmail(): String{
-        return email
-    }
-    fun getPassword(): String{
-        return password
-    }
-}
+data class User(
+    var name: String,
+    var imagePath: String,
+    var email: String,
+    var password: String,
+    var token: String,
+    var userId: String,
+    var expiration: String,
+    var roel:String
+)

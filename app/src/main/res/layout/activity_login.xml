@@ -52,34 +52,45 @@
             app:layout_constraintTop_toTopOf="@+id/sky_img" />
 
 
-
-        <EditText
-            android:id="@+id/emailET"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailLayout"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_margin="10dp"
-            android:drawableStart="@drawable/email_icon"
-            android:background="@drawable/input_field"
-            android:padding="10dp"
-            android:drawablePadding="10dp"
-            android:fontFamily="@font/font"
-            android:inputType="textEmailAddress"
-            android:hint="Moaz @gmail.com"
-            android:textSize="20sp" />
+            android:hint="Email"
+            app:endIconMode="clear_text"
+            android:layout_height="wrap_content">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailET"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_margin="10dp"
+                android:drawableStart="@drawable/email_icon"
+                android:background="@drawable/input_field"
+                android:padding="10dp"
+                android:drawablePadding="10dp"
+                android:inputType="textEmailAddress"
+                android:textSize="20sp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/passwordET"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/passLayout"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/input_field"
-            android:padding="10dp"
-            android:fontFamily="@font/font"
-            android:inputType="textPassword"
-            android:drawableStart="@drawable/password_icon"
-            android:drawablePadding="10dp"
-            android:hint="MoazEssa187.@"
-            android:textSize="20sp" />
+            android:layout_height="wrap_content"
+            android:hint="password"
+            app:endIconMode="password_toggle">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/passwordET"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/input_field"
+                android:padding="10dp"
+                android:inputType="textPassword"
+                android:drawableStart="@drawable/password_icon"
+                android:drawablePadding="10dp"
+                android:textSize="20sp"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/loginBtn"
@@ -103,6 +114,7 @@
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="visible"
         android:id="@+id/chooseParentOrSpecialist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -175,6 +187,36 @@
             app:layout_constraintStart_toEndOf="@+id/textView2"
             app:layout_constraintTop_toTopOf="@+id/textView2" />
 
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="gone"
+        android:id="@+id/loadingView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#99000000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/loadingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/view2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

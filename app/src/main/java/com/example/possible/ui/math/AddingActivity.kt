@@ -1,6 +1,8 @@
 package com.example.possible.ui.math
 
+import DialogBuilder
 import android.os.Bundle
+import android.os.Handler
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -20,6 +22,7 @@ class AddingActivity : AppCompatActivity() {
     private lateinit var pref: SharedPref
     private lateinit var resultArray: ArrayList<Int>
     private var numOfQuestion=0
+    private val  handler : Handler = Handler()
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityAddingBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -45,10 +48,18 @@ class AddingActivity : AppCompatActivity() {
               finish()
           }
           else{  val msg=if(question.c==getTheSum()) "true" else "wrong"
-            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
             if(msg=="true"){
                 binding.celeprationAnim.visibility=VISIBLE
                 binding.celeprationAnim.playAnimation()
+                handler.postDelayed({
+                    DialogBuilder.showSuccessDialog(this,"Excellent!","next",onConfirm = {
+                        setTheQuestionView(operationType,operationLevel)
+                    })
+                },200)
+
+            }
+              else{
+                  DialogBuilder.showErrorDialog(this,"Wrong Answer","Try to solve Again")
             }
           }
 

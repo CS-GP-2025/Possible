@@ -1,9 +1,11 @@
 package com.example.possible.ui.profile
 
 import DialogBuilder
+import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -12,9 +14,10 @@ import com.example.possible.databinding.ActivityProfileBinding
 import com.example.possible.repo.local.SharedPref
 import com.example.possible.ui.profile.children.AddChildActivity
 import com.example.possible.ui.profile.children.Children
-import com.example.possible.ui.profile.children.ChildrenTests
+import com.example.possible.ui.profile.children.testsForChildren.ChildrenTests
 import com.example.possible.ui.profile.profileManage.EditProfileActivity
 import com.example.possible.ui.signLogin.Login.LoginActivity
+import com.example.possible.util.helper.dataManager.AppDataManager
 
 
 class ProfileActivity : AppCompatActivity() {
@@ -48,7 +51,9 @@ class ProfileActivity : AppCompatActivity() {
         }
         binding.childrenLL.setOnClickListener {
             animateBtn(binding.childrenLL){
-            startActivity(Intent(this, Children::class.java))
+                val intent = Intent(this, Children::class.java)
+                intent.putExtra("mode", "view")
+            startActivity(intent)
             }
 
         }
@@ -61,6 +66,7 @@ class ProfileActivity : AppCompatActivity() {
                     "Cancel",
                     {
                         logout()
+                        finish()
                     },
                     {
                         //nothing
@@ -82,18 +88,19 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
-    private fun loadProfileImage() {
+    /*private fun loadProfileImage() {
         val savedUri = sharedPreferences.getImage()
         if (savedUri != null) {
             val uri = Uri.parse(savedUri)
             binding.profileImage.setImageURI(uri)
-        }}
+        }}*/
+
 
     override fun onResume() {
         super.onResume()
-        loadProfileImage()
+        AppDataManager.viewProfileImage(binding.profileImage,sharedPreferences,this)
         val user=sharedPreferences.getProfileDetails()
-        binding.userName.text=user.getName()
+        binding.userName.text=user.name
     }
     private fun animateBtn(b: View,unit:()->Unit){
         b.animate().scaleY(1.2f).scaleX(1.2f).setDuration(150).withEndAction{
@@ -104,17 +111,35 @@ class ProfileActivity : AppCompatActivity() {
 
     }
     private fun logout() {
-        sharedPreferences.setProfileData("","","",false)
+        clearAppData(this)
         Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
     private fun isSpecialistView(){
-        if(sharedPreferences.getPath()=="specialist"){
+        if(sharedPreferences.getRole()=="Specialist"){
             binding.addChildLL.visibility=View.GONE
             binding.childrenLL.visibility=View.GONE
             binding.testsLL.visibility=View.GONE
         }
     }
+    private fun clearAppData(context: Context) {
+        context.cacheDir.deleteRecursively() // مسح الكاش
+        context.filesDir.deleteRecursively() // مسح الملفات
+        context.getExternalFilesDir(null)?.deleteRecursively() // مسح الملفات الخارجية
+        context.getSharedPreferences("profile", Context.MODE_PRIVATE).edit().clear().apply() // مسح SharedPreferences
+        context.getSharedPreferences("mode", Context.MODE_PRIVATE).edit().clear().apply() // مسح SharedPreferences
+        context.getSharedPreferences("path", Context.MODE_PRIVATE).edit().clear().apply() // مسح SharedPreferences
+        context.getSharedPreferences("test", Context.MODE_PRIVATE).edit().clear().apply() // مسح SharedPreferences
+
+        // إعادة تشغيل التطبيق
+        val intent = Intent(context, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(intent)
+        //Runtime.getRuntime().exit(0) // إغلاق التطبيق
+    }
+
+
+
+
 
 }

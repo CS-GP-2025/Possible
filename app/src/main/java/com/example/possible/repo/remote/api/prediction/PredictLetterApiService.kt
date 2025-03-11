@@ -9,9 +9,6 @@ import retrofit2.http.Part
 
 
 interface PredictLetterApiService {
-
-
-
     @Multipart
     @POST("predict")
     suspend fun uploadLetterImage(

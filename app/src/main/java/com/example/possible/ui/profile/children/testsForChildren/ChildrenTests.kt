@@ -1,17 +1,16 @@
-package com.example.possible.ui.profile.children
+package com.example.possible.ui.profile.children.testsForChildren
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.example.possible.R
 import com.example.possible.databinding.ActivityChildrenTestsBinding
 import com.example.possible.model.Child
 import com.example.possible.repo.local.database.LocalRepoImp
+import com.example.possible.ui.report.ReportActivity
 import com.example.possible.util.adapter.ChildrenAdapter
 import com.example.possible.util.listener.ChildListener
 import kotlinx.coroutines.Dispatchers
@@ -64,8 +63,8 @@ class ChildrenTests : AppCompatActivity(),ChildListener {
         }
     }
 
-    override fun onClick(child: Child) {
-        TODO("Not yet implemented")
+    override fun onClick(child: Child){
+        startActivity(Intent(this, ToDoTestsActivity::class.java))
     }
 
     override fun onDelete(position: Int, child: Child) {

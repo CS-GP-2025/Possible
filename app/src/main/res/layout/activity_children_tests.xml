@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/activity_bg"
-    tools:context=".ui.profile.children.ChildrenTests">
+    tools:context=".ui.profile.children.testsForChildren.ChildrenTests">
     <ImageView
         android:id="@+id/backArrowIV"
         android:layout_width="30dp"

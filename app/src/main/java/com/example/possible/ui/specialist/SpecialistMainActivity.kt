@@ -3,6 +3,8 @@ package com.example.possible.ui.specialist
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.possible.databinding.ActivitySpecialistMainBinding
@@ -12,6 +14,7 @@ import com.example.possible.ui.profile.children.AddChildActivity
 import com.example.possible.ui.profile.children.Children
 import com.example.possible.ui.specialist.tests.TestTypesActivity
 import com.example.possible.ui.specialist.tests.TestsActivity
+import com.example.possible.util.helper.dataManager.AppDataManager
 
 class SpecialistMainActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySpecialistMainBinding
@@ -58,7 +61,7 @@ class SpecialistMainActivity : AppCompatActivity() {
         val intent = Intent(this, ProfileActivity::class.java)
         startActivity(intent)
     }
-    private fun loadProfileDetails() {
+    /*private fun loadProfileDetails() {
         val savedUri = pref.getImage()
         if (savedUri != null) {
             val uri = Uri.parse(savedUri)
@@ -66,9 +69,11 @@ class SpecialistMainActivity : AppCompatActivity() {
         }
         val userName = pref.getProfileDetails().getName()
         binding.userNameTV.text=userName
-    }
+    }*/
     override fun onResume() {
         super.onResume()
-        loadProfileDetails()
+        binding.userNameTV.text=pref.getProfileDetails().name
+        AppDataManager.viewProfileImage(binding.profileIV,pref,this)
+        Log.d("ImageProfile"," ${AppDataManager.getProfileDetails(pref).imagePath} from main activity")
     }
 }

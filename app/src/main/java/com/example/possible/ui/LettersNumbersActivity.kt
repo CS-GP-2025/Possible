@@ -2,7 +2,6 @@ package com.example.possible.ui
 
 import android.content.Intent
 import android.graphics.Rect
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -18,6 +17,7 @@ import com.example.possible.repo.local.SharedPref
 import com.example.possible.ui.drawing.DrawingActivity
 import com.example.possible.ui.tracing.TracingActivity
 import com.example.possible.util.TestDecoder
+import com.example.possible.util.helper.dataManager.AppDataManager
 import com.example.possible.util.listener.LettersListener
 
 class LettersNumbersActivity : AppCompatActivity() , LettersListener {
@@ -101,17 +101,17 @@ class LettersNumbersActivity : AppCompatActivity() , LettersListener {
             startActivity(intent)
     }
     }
-    private fun loadProfileImage() {
+   /* private fun loadProfileImage() {
         val savedUri = pref.getImage()
         if (savedUri != null) {
             val uri = Uri.parse(savedUri)
             binding.profileIV.setImageURI(uri)
-        }}
+        }}*/
 
     override fun onResume() {
         super.onResume()
-        loadProfileImage()
-        val userName=pref.getProfileDetails().getName()
+        AppDataManager.viewProfileImage(binding.profileIV,pref,this)
+        val userName=pref.getProfileDetails().name
         binding.userNameTV.text=userName
     }
     private fun isItFromSettingTest():Boolean{

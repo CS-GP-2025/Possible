@@ -9,7 +9,7 @@ import retrofit2.http.Part
 
 interface PredictNumberApiService {
     @Multipart
-    @POST("predictt")
+    @POST("predict")
     suspend fun uploadNumberImage(
         @Part image: MultipartBody.Part
     ): Response<NumberApiResponse>

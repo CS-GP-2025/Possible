@@ -1,6 +1,6 @@
 package com.example.possible.repo.remote.response.lettersNumbers
 
-sealed class LetterApiResponse(){
+sealed class LetterApiResponse{
     data class Success(val character: Char,
                        val prediction: String)
         : LetterApiResponse()

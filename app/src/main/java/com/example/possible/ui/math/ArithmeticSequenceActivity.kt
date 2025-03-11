@@ -2,6 +2,7 @@ package com.example.possible.ui.math
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -30,7 +31,9 @@ class ArithmeticSequenceActivity : AppCompatActivity() {
         setSequence(level)
         pref= SharedPref(this)
         handleDone()
-        handleChange()
+        binding.changeQues.setOnClickListener {
+            handleChange()
+        }
         binding.backArrowIV.setOnClickListener {
             finish()
         }
@@ -85,9 +88,14 @@ class ArithmeticSequenceActivity : AppCompatActivity() {
                 Toast.makeText(this, "Correct", LENGTH_SHORT).show()
                 binding.celeprationAnim.visibility = View.VISIBLE
                 binding.celeprationAnim.playAnimation()
+                Handler().postDelayed({
+                    DialogBuilder.showSuccessDialog(this,"Good boy!","next",onConfirm = {
+                        handleChange()
+                    })
+                },200)
             }
             else{
-                Toast.makeText(this, "Wrong", LENGTH_SHORT).show()
+                DialogBuilder.showErrorDialog(this,"Wrong Answer","Try Again")
             }
             handleCardBackground(binding.fourth, firstInput == firstResult)
             handleCardBackground(binding.sixth, secondInput == secondResult)
@@ -95,16 +103,16 @@ class ArithmeticSequenceActivity : AppCompatActivity() {
         }
         }
     }
+
+
     private fun handleChange(){
-        binding.changeQues.setOnClickListener {
-            setSequence(level)
-            binding.fourth.text.clear()
-            binding.sixth.text.clear()
-            binding.celeprationAnim.visibility = View.GONE
-            binding.celeprationAnim.cancelAnimation()
-            binding.fourth.setBackgroundResource(R.color.white)
-            binding.sixth.setBackgroundResource(R.color.white)
-        }
+        setSequence(level)
+        binding.fourth.text.clear()
+        binding.sixth.text.clear()
+        binding.celeprationAnim.visibility = View.GONE
+        binding.celeprationAnim.cancelAnimation()
+        binding.fourth.setBackgroundResource(R.color.white)
+        binding.sixth.setBackgroundResource(R.color.white)
     }
 
     private fun isItFromSettingTest():Boolean{

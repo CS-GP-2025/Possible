@@ -9,4 +9,11 @@ interface LocalRepo {
     suspend fun getChildById(id: Int): Child?
     suspend fun deleteChild(child: Child)
 
+    suspend fun updateReadingRate(childId: Int, readingRate: Int)
+    suspend fun updateWritingRate(childId: Int, writingRate: Int)
+    suspend fun updateReadingDays(childId: Int, readingDays: Int)
+    suspend fun updateWritingDays(childId: Int, writingDays: Int)
+    suspend fun updateLatestReadingDay(childId: Int, latestReadingDay: String)
+    suspend fun updateLatestWritingDay(childId: Int, latestWritingDay: String)
+
 }

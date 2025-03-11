@@ -19,9 +19,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.io.FileOutputStream
+
 class DrawingFragment : Fragment() {
     private lateinit var binding: FragmentDrawingBinding
     private var name = ""
@@ -73,6 +74,7 @@ class DrawingFragment : Fragment() {
         }
     }
 
+
     private suspend fun sendToLetterPrediction(): Boolean {
         val image = convertBitmapToMultipartBody(binding.drawer.getBitmap()!!, requireContext())
         val request = RetrofitBuilder.letterApiService.uploadLetterImage(image)
@@ -81,7 +83,7 @@ class DrawingFragment : Fragment() {
             if (responseBody != null) {
                 handleResponse(responseBody)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), prediction, Toast.LENGTH_SHORT).show()
+                  //  Toast.makeText(requireContext(), prediction, Toast.LENGTH_SHORT).show()
                 }
                 name == prediction // إرجاع النتيجة بعد انتهاء المهمة
             } else {
@@ -100,7 +102,7 @@ class DrawingFragment : Fragment() {
             if (responseBody != null) {
                 prediction = responseBody.predicted_class.toString()
                 withContext(Dispatchers.Main){
-                    Toast.makeText(requireContext(), prediction, Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(requireContext(), prediction, Toast.LENGTH_SHORT).show()
                 }
                 name == prediction // إرجاع النتيجة بعد انتهاء المهمة
             } else {
@@ -118,7 +120,7 @@ class DrawingFragment : Fragment() {
                 prediction = response.character.toString()
             }
             is LetterApiResponse.Error -> {
-                Toast.makeText(requireContext(), "Prediction Error", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(), "Prediction Error", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -134,7 +136,7 @@ class DrawingFragment : Fragment() {
         outputStream.flush()
         outputStream.close()
 
-        val requestBody = RequestBody.create("image/jpeg".toMediaTypeOrNull(), file)
+        val requestBody = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         return MultipartBody.Part.createFormData("image", file.name, requestBody)
     }
     fun reset(){

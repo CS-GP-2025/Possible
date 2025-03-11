@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.possible.databinding.ActivityChildrenBinding
 import com.example.possible.model.Child
 import com.example.possible.repo.local.database.LocalRepoImp
+import com.example.possible.ui.MainActivity
 import com.example.possible.util.adapter.ChildrenAdapter
 import com.example.possible.util.listener.ChildListener
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +31,7 @@ class Children : AppCompatActivity(), ChildListener {
     private lateinit var binding: ActivityChildrenBinding
     private lateinit var childrenList: ArrayList<Child>
     private lateinit var adapter: ChildrenAdapter
+    private var mode = ""
 
     private val code = 1001 // Request code for permission
 
@@ -38,6 +40,7 @@ class Children : AppCompatActivity(), ChildListener {
         super.onCreate(savedInstanceState)
         binding = ActivityChildrenBinding.inflate(layoutInflater)
         childrenList = ArrayList()
+        mode = intent.getStringExtra("mode")!!
         adapter = ChildrenAdapter(childrenList, this)
         adapter.setTestMode(false)
         setContentView(binding.root)
@@ -45,11 +48,27 @@ class Children : AppCompatActivity(), ChildListener {
         db = LocalRepoImp(this)
         enableEdgeToEdge()
         checkAndRequestPermissions()
-        getChildren { setUpAdapter(childrenList) }
         binding.backArrowIV.setOnClickListener {
             finish()
         }
+        binding.addChild.setOnClickListener {
+            val intent = Intent(this, AddChildActivity::class.java)
+            intent.putExtra("mode", "add")
+            startActivity(intent)
+        }
+        getChildren{setUpAdapter(childrenList)}
+        controlForViewMode()
+    }
 
+    private fun controlForViewMode(){
+        if(mode=="select"){
+            binding.backArrowIV.visibility=android.view.View.GONE
+            binding.hintOfSelection.visibility=android.view.View.VISIBLE
+        }
+        else{
+            binding.backArrowIV.visibility=android.view.View.VISIBLE
+            binding.hintOfSelection.visibility=android.view.View.GONE
+    }
     }
 
     private fun getChildren(onView:()->Unit) {
@@ -116,11 +135,24 @@ class Children : AppCompatActivity(), ChildListener {
     }
 
     override fun onClick(child: Child) {
+        if(mode=="select"){
+            DialogBuilder.showAlertDialog(this,
+                "Select this Child for Training",
+                "Hello!"
+                ,"Yes",
+                "No",{
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("childId", child.id)
+                    startActivity(intent)
+                },{})
+
+        }
+        else{
         // Display the URI when an item is clicked
         val intent = Intent(this, AddChildActivity::class.java)
         intent.putExtra("mode", "edit")
         intent.putExtra("childId", child.id)
-        startActivity(intent)
+        startActivity(intent)}
     }
 
     override fun onDelete(position: Int, child: Child) {

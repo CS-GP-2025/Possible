@@ -1,6 +1,7 @@
 package com.example.possible.ui.math
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -83,12 +84,18 @@ class ComparisonActivity : AppCompatActivity() {
             }
             else{
             if(binding.sign.text == comparison.third){
-                Toast.makeText(this,"Correct",Toast.LENGTH_SHORT).show()
                 binding.celeprationAnim.visibility = VISIBLE
                 binding.celeprationAnim.playAnimation()
+                Handler().postDelayed({
+                    DialogBuilder.showSuccessDialog(this,"Bravooo!","next",onConfirm = {
+                        comparison=getComparison(level)
+                        setQuestionView(comparison)
+                    })
+                },200)
+
             }
             else{
-                Toast.makeText(this,"Wrong",Toast.LENGTH_SHORT).show()
+                DialogBuilder.showErrorDialog(this,"Wrong Answer","Try Again")
             }
             }
         }
