@@ -3,7 +3,6 @@ package com.example.possible.ui.reading
 import android.Manifest
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -11,8 +10,6 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -25,13 +22,14 @@ import com.example.possible.util.listener.TextListener
 import java.util.Locale
 
 class ReadTextActivity : AppCompatActivity(), TextListener {
+
     private lateinit var binding: ActivityReadTextBinding
     private lateinit var pulseAnimator: ObjectAnimator
     private lateinit var speechRecognizer: SpeechRecognizer
     private lateinit var adapter: TextsAdapter
+
     private var actualText = ""
     private var speechText = ""
-    private var isRecording = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,54 +37,96 @@ class ReadTextActivity : AppCompatActivity(), TextListener {
         enableEdgeToEdge()
         setContentView(binding.root)
 
-        setupRecyclerView()
-        checkPermission()
+        setupUI()
+        checkAudioPermission()
         setupSpeechRecognizer()
+    }
+
+    private fun setupUI() {
+        setupRecyclerView()
         setupClickListeners()
     }
 
-    /** ✅ إعداد قائمة النصوص */
     private fun setupRecyclerView() {
         val texts = arrayListOf(
-            "Hello how are you", "I am fine thank you", "My name is John", "I am 25 years old",
-            "I live in New York", "It is sunny and warm today", "I love to read books"
+            "The cat is black",
+            "I like my dog",
+            "The sun is hot",
+            "I see a bird",
+            "She has a red ball",
+            "We play in the park",
+            "The sky is blue",
+            "He has a big hat",
+            "The fish swims fast",
+            "I love my mom",
+            "The dog barks loud",
+            "We eat apples",
+            "The car is red",
+            "I can jump high",
+            "The tree is tall",
+            "Birds can fly",
+            "The cake is sweet",
+            "I see the moon",
+            "The boy runs fast",
+            "The stars are bright",
+            "The rain is wet",
+            "My shoes are new",
+            "I like ice cream",
+            "The frog is green",
+            "The sun shines bright",
+            "My bike is blue",
+            "We swim in the pool",
+            "The fox is smart",
+            "The duck swims fast",
+            "I see a rainbow",
+            "The cow says moo",
+            "I have a toy car",
+            "The bird sings sweet",
+            "I like to read",
+            "The dog has fur",
+            "The cat sleeps well",
+            "The sheep is white",
+            "The mouse is small",
+            "The cake is big",
+            "The leaf is green",
+            "The fox runs fast",
+            "I like to draw",
+            "The kite flies high",
+            "The pig is pink",
+            "The snow is cold",
+            "The bear is big",
+            "I see a tree",
+            "The horse is brown",
+            "The fire is hot",
+            "The wind is strong"
         )
+
         adapter = TextsAdapter(texts, this)
         binding.recyclerView.adapter = adapter
     }
 
-    /** ✅ التأكد من صلاحية الوصول للمايكروفون */
-    private fun checkPermission() {
+    private fun checkAudioPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 1)
         }
     }
 
-    /** ✅ تجهيز محرك التعرف على الصوت */
     private fun setupSpeechRecognizer() {
         if (!SpeechRecognizer.isRecognitionAvailable(this)) {
-            Toast.makeText(this, "Speech recognition not supported", Toast.LENGTH_LONG).show()
+            showToast("Speech recognition not supported")
             return
         }
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
         speechRecognizer.setRecognitionListener(object : RecognitionListener {
-            override fun onReadyForSpeech(params: Bundle?) {
-                showListeningUI()
-            }
-
-            override fun onEndOfSpeech() {
-                stopListeningUI()
-                if (isRecording) speechRecognizer.startListening(getSpeechIntent())
-            }
-
+            override fun onReadyForSpeech(params: Bundle?) = showListeningUI()
+            override fun onEndOfSpeech() = stopListeningUI()
             override fun onResults(results: Bundle?) {
-                speechText = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.get(0) ?: ""
-                if (isRecording) speechRecognizer.startListening(getSpeechIntent())
+                speechText = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.getOrNull(0) ?: ""
+                navigateToResult()
             }
-
-            override fun onPartialResults(partialResults: Bundle?) {}
             override fun onError(error: Int) {}
+            override fun onPartialResults(partialResults: Bundle?) {}
             override fun onRmsChanged(rmsdB: Float) {}
             override fun onBufferReceived(buffer: ByteArray?) {}
             override fun onBeginningOfSpeech() {}
@@ -94,33 +134,20 @@ class ReadTextActivity : AppCompatActivity(), TextListener {
         })
     }
 
-    /** ✅ تجهيز الـ Intent الخاص بالتعرف على الصوت */
-    private fun getSpeechIntent(): Intent {
-        return Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-            putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak something")
-        }
+    private fun getSpeechIntent() = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+        putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak something")
     }
 
-    /** ✅ ربط الأزرار بالأحداث */
     private fun setupClickListeners() {
         binding.recordBtn.setOnClickListener {
-            isRecording = !isRecording
-            if (isRecording) {
-                speechRecognizer.startListening(getSpeechIntent())
-                startPulseAnimation()
-            } else {
-                speechRecognizer.stopListening()
-                stopListeningUI()
-                goToResult()
-            }
+            speechRecognizer.startListening(getSpeechIntent())
+            startPulseAnimation()
         }
-
         binding.backArrowIV.setOnClickListener { finish() }
     }
 
-    /** ✅ تشغيل تأثير النبض عند بدء التسجيل */
     private fun startPulseAnimation() {
         pulseAnimator = ObjectAnimator.ofPropertyValuesHolder(
             binding.recordSignals,
@@ -134,35 +161,18 @@ class ReadTextActivity : AppCompatActivity(), TextListener {
         }
     }
 
-    /** ✅ تغيير الواجهة عند بدء التسجيل */
     private fun showListeningUI() {
-        Toast.makeText(this, "Listening...", Toast.LENGTH_SHORT).show()
-        binding.hint.animate().alpha(0f).setDuration(200).withEndAction {
-            binding.hint.visibility = View.GONE
-            binding.recordSignals.visibility = View.VISIBLE
-            binding.hintCard.alpha = 0f
-            binding.recordSignals.alpha = 0f
-            binding.hintCard.animate().alpha(1f).setDuration(200).withEndAction {
-                binding.recordSignals.animate().alpha(1f).setDuration(150).withEndAction {
-                    binding.recordSignals.animate().scaleY(0.1f).setDuration(150).withEndAction {
-                        binding.recordSignals.animate().scaleY(1f).setDuration(300)
-                    }.start()
-                }.start()
-            }.start()
-        }.start()
+        binding.hint.visibility = View.GONE
+        binding.recordSignals.visibility = View.VISIBLE
+        pulseAnimator.start()
     }
 
-    /** ✅ تغيير الواجهة عند التوقف عن التسجيل */
     private fun stopListeningUI() {
-        Toast.makeText(this, "Stopped Listening", Toast.LENGTH_SHORT).show()
-        binding.recordBtn.animate().scaleY(1f).scaleX(1f).setDuration(100).withEndAction {
-            binding.recordBtn.setBackgroundResource(R.drawable.is_not_recording)
-        }.start()
+        binding.recordBtn.setBackgroundResource(R.drawable.is_not_recording)
         pulseAnimator.cancel()
     }
 
-    /** ✅ فتح شاشة النتيجة */
-    private fun goToResult() {
+    private fun navigateToResult() {
         val intent = Intent(this, ReadingResult::class.java).apply {
             putExtra("actualText", actualText)
             putExtra("speechText", speechText)
@@ -170,17 +180,20 @@ class ReadTextActivity : AppCompatActivity(), TextListener {
         startActivity(intent)
     }
 
-    /** ✅ إنهاء التعرف على الصوت عند إغلاق النشاط */
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         speechRecognizer.destroy()
+        pulseAnimator.cancel()
     }
 
-    /** ✅ تحديد النص عند الضغط عليه */
     override fun onClick(text: String) {
-        binding.theMainView.visibility = View.VISIBLE
-        binding.actualText.text = text
         actualText = text
+        binding.actualText.text = text
+        binding.theMainView.visibility = View.VISIBLE
         binding.dummyView.visibility = View.GONE
     }
 }

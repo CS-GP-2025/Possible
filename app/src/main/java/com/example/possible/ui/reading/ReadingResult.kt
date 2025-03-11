@@ -32,7 +32,7 @@ class ReadingResult : AppCompatActivity() {
         val actualText = intent.getStringExtra("actualText")!!
         val speechText = intent.getStringExtra("speechText")!!
 
-        Toast.makeText(this, speechText, Toast.LENGTH_LONG).show()
+        //Toast.makeText(this, speechText, Toast.LENGTH_LONG).show()
 
 
         //highlight the correct words and show the result
@@ -68,7 +68,7 @@ class ReadingResult : AppCompatActivity() {
             val actualWord=correctWords[i]
             val endIndex = startIndex + actualWord.length
 
-            if (actualWord.lowercase()==word.lowercase()) {
+            if (areWordsSimilar(word, actualWord)) {
                 // Highlight correct words in green
                 counter++
                 spannableString.setSpan(
@@ -100,6 +100,32 @@ class ReadingResult : AppCompatActivity() {
         super.onDestroy()
         updateReadingRate()
     }
+    private fun areWordsSimilar(word1: String, word2: String): Boolean {
+        val threshold = 1  // لو الفرق حرف واحد أو أقل، هيرجع true
+
+        val distance = levenshteinDistance(word1.lowercase(), word2.lowercase())
+        return distance <= threshold
+    }
+
+    private fun levenshteinDistance(str1: String, str2: String): Int {
+        val dp = Array(str1.length + 1) { IntArray(str2.length + 1) }
+
+        for (i in 0..str1.length) {
+            for (j in 0..str2.length) {
+                if (i == 0) {
+                    dp[i][j] = j
+                } else if (j == 0) {
+                    dp[i][j] = i
+                } else if (str1[i - 1] == str2[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1]
+                } else {
+                    dp[i][j] = 1 + minOf(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
+                }
+            }
+        }
+        return dp[str1.length][str2.length]
+    }
+
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun updateReadingRate() {

@@ -33,6 +33,7 @@ class SpecialistMainActivity : AppCompatActivity() {
     private fun setControllers(){
         binding.childrenLL.setOnClickListener {
             val intent = Intent(this, Children::class.java)
+            intent.putExtra("mode", "view")
             startActivity(intent)
         }
         binding.newTest.setOnClickListener {
