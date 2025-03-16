@@ -1,10 +1,15 @@
 package com.example.possible.repo.remote
 
-import com.example.possible.repo.remote.api.prediction.PredictLetterApiService
-import com.example.possible.repo.remote.api.prediction.PredictNumberApiService
-import com.example.possible.repo.remote.api.register.LoginApiService
-import com.example.possible.repo.remote.api.register.RegisterApiService
-import com.example.possible.repo.remote.api.register.UpdateUserDataService
+import com.example.possible.repo.remote.api.aiPrediction.PredictLetterApiService
+import com.example.possible.repo.remote.api.aiPrediction.PredictNumberApiService
+import com.example.possible.repo.remote.api.account.LoginApiService
+import com.example.possible.repo.remote.api.account.RegisterApiService
+import com.example.possible.repo.remote.api.account.UpdateUserDataService
+import com.example.possible.repo.remote.api.children.AddChild
+import com.example.possible.repo.remote.api.children.DeleteChildApiService
+import com.example.possible.repo.remote.api.children.GetAllChildren
+import com.example.possible.repo.remote.api.children.GetUserChildren
+import com.example.possible.repo.remote.api.children.UpdateChild
 import com.example.possible.repo.remote.response.lettersNumbers.LetterApiResponse
 import com.example.possible.repo.remote.response.lettersNumbers.LetterResponseDeserializer
 import com.google.gson.Gson
@@ -18,93 +23,85 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitBuilder {
 
-    // API URLs
     private const val LOCALHOST_IP ="192.168.1.2"
-    private  var LETTERS_BASE_URL = "http://$LOCALHOST_IP:5000/"
-    private var NUMBERS_BASE_URL = "http://$LOCALHOST_IP:3000/"
-    private var REGISTER_BASE_URL = "https://gp-api.runasp.net/api/Account/"
-    private var LOGIN_BASE_URL ="https://gp-api.runasp.net/api/Account/"
-    private var EDIT_PROFILE_URL ="https://gp-api.runasp.net/api/Account/"
+    private const val LETTERS_BASE_URL = "http://$LOCALHOST_IP:5000/"
+    private const val NUMBERS_BASE_URL = "http://$LOCALHOST_IP:3000/"
+    private const val API_BASE_URL = "https://gp-api.runasp.net/api/"
 
-    // Gson instances
     private val gsonLetterPrediction: Gson = GsonBuilder()
         .registerTypeAdapter(LetterApiResponse::class.java, LetterResponseDeserializer())
         .create()
 
     private val gsonDefault: Gson = GsonBuilder().create()
-//
-// logging
-   private val logging = HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY)
-    // OkHttpClient with timeouts
+    private val gsonLenient: Gson = GsonBuilder().setLenient().create()
+
+    private val logging = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
     private val okHttpClient = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)  // زيادة مدة الاتصال
+        .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
-        .retryOnConnectionFailure(true)  // إعادة المحاولة عند الفشل
+        .retryOnConnectionFailure(true)
         .addInterceptor(logging)
         .build()
 
-    // Retrofit instance for letters API
-    private val letterRetrofit: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl(LETTERS_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gsonLetterPrediction))
+    private fun createRetrofit(baseUrl: String, gson: Gson): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
             .build()
+    }
+    //ai prediction Api services
+
+    val letterApiService: PredictLetterApiService by lazy {
+        createRetrofit(LETTERS_BASE_URL, gsonLetterPrediction).create(PredictLetterApiService::class.java)
     }
 
-    // Retrofit instance for numbers API
-    private val numberRetrofit: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl(NUMBERS_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gsonDefault))
-            .client(okHttpClient)
-            .build()
+    val numberApiService: PredictNumberApiService by lazy {
+        createRetrofit(NUMBERS_BASE_URL, gsonDefault).create(PredictNumberApiService::class.java)
     }
-    val gsonLenient: Gson = GsonBuilder().setLenient().create()
-    private val registerRetrofit: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl(REGISTER_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gsonDefault))
-            .client(okHttpClient)
-            .build()
-    }
-    private val loginRetrofit: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl(LOGIN_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gsonDefault))
-            .client(okHttpClient)
-            .build()
-    }
-    private val editProfileRetrofit: Retrofit by lazy {
-        //val gson22 = GsonBuilder().setLenient().create()
 
+    private val apiRetrofit: Retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl(EDIT_PROFILE_URL)
+            .baseUrl(API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gsonLenient))
             .addConverterFactory(GsonConverterFactory.create(gsonDefault))
             .addConverterFactory(ScalarsConverterFactory.create())
             .client(okHttpClient)
             .build()
     }
+    //account Api services
 
     val registerApiService: RegisterApiService by lazy {
-        registerRetrofit.create(RegisterApiService::class.java)
+        apiRetrofit.create(RegisterApiService::class.java)
     }
 
-    // API Services
-    val letterApiService: PredictLetterApiService by lazy {
-        letterRetrofit.create(PredictLetterApiService::class.java)
-    }
-
-    val numberApiService: PredictNumberApiService by lazy {
-        numberRetrofit.create(PredictNumberApiService::class.java)
-    }
     val loginApiService: LoginApiService by lazy {
-        loginRetrofit.create(LoginApiService::class.java)
+        apiRetrofit.create(LoginApiService::class.java)
     }
+
     val editProfileApiService: UpdateUserDataService by lazy {
-        editProfileRetrofit.create(UpdateUserDataService::class.java)
+        apiRetrofit.create(UpdateUserDataService::class.java)
+    }
+
+
+
+    //children Api services
+
+    val addChildApiService: AddChild by lazy {
+        apiRetrofit.create(AddChild::class.java)
+    }
+
+    val deleteChildApiService: DeleteChildApiService by lazy {
+        apiRetrofit.create(DeleteChildApiService::class.java)
+    }
+    val getUserChildrenApiService: GetUserChildren by lazy {
+        apiRetrofit.create(GetUserChildren::class.java)
+    }
+    val updateChildApiService: UpdateChild by lazy {
+        apiRetrofit.create(UpdateChild::class.java)
+    }
+    val getAllChildrenApiService: GetAllChildren by lazy {
+        apiRetrofit.create(GetAllChildren::class.java)
     }
 }

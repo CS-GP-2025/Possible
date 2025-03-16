@@ -45,7 +45,7 @@ class TestsActivity : AppCompatActivity() , TestListener {
     }
 
     override fun onTestClick(test: Test, position: Int) {
-        if(test.name=="BBB"){
+        if(test.name=="BBB" || test.name=="CCC"){
             val intent = Intent(this, DysgraphiaTestActivity::class.java)
             intent.putExtra("test",position)
             startActivity(intent)

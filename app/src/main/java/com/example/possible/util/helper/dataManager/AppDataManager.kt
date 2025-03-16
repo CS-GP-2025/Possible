@@ -1,7 +1,9 @@
 package com.example.possible.util.helper.dataManager
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log
 import android.widget.ImageView
 import com.bumptech.glide.Glide
@@ -11,7 +13,11 @@ import com.example.possible.util.helper.dataFormater.DataFormater
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
 object AppDataManager {
 
@@ -28,8 +34,8 @@ object AppDataManager {
         role:String
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            val imagePath = DataFormater.imageUrlToPathInApp(context, image, "profile_image")
-            Log.d("ImageProfile",imagePath!!)
+            val imagePath = DataFormater.imageUrlToPathInApp(context, image, "profile_image")?: " "
+            Log.d("ImageProfile",imagePath)
 
 
             if (imagePath != null) {
@@ -136,6 +142,44 @@ object AppDataManager {
             println("لم يتم العثور على الملف.")
         }
     }
+
+     suspend fun downloadAndSaveChildImage(
+        context: Context,
+        imageUrl: String,
+        imageName: String
+    ): Uri? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val url = URL(imageUrl)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.connect()
+
+                if (connection.responseCode != HttpURLConnection.HTTP_OK) return@withContext null
+
+                val inputStream = connection.inputStream
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                inputStream.close()
+
+                val folder = File(context.filesDir, "childrenPhotos")
+                if (!folder.exists()) folder.mkdirs()
+
+                val imageFile = File(folder, "$imageName.jpg")
+                val outputStream = FileOutputStream(imageFile)
+                bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, outputStream)
+                outputStream.flush()
+                outputStream.close()
+
+                Uri.fromFile(imageFile)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
     }
+
+
+
+
+}
 
 

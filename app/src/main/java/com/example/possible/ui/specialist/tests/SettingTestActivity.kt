@@ -126,8 +126,8 @@ class SettingTestActivity : AppCompatActivity() {
     // Returns a list of test options based on the type
     private fun setTheList(type: String): List<String> {
         return when (type) {
-            "Dyslexia", "Dyscalculia" -> listOf("Adding", "Subtraction", "Arithmetic Sequence", "Inequality")
-            "Dysgraphia" -> listOf("Write a letter", "Write a number", "Sentence Combining", "Complete")
+            "Dyscalculia" -> listOf("Adding", "Subtraction", "Arithmetic Sequence", "Inequality")
+            "Dyslexia","Dysgraphia" -> listOf("Write a letter", "Write a number", "Sentence Combining", "Complete")
             else -> emptyList()
         }
     }

@@ -71,7 +71,7 @@
             android:name=".ui.profile.children.Children"
             android:exported="false" />
         <activity
-            android:name=".ui.profile.children.AddChildActivity"
+            android:name=".ui.profile.children.addChild.AddChildActivity"
             android:exported="false" />
         <activity
             android:name=".ui.profile.children.testsForChildren.ChildrenTests"

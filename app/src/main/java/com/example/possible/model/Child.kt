@@ -6,12 +6,12 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "children")
 data class Child(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     val id:Int,
     val name: String,
     val age: Int,
     val imageUri: String,
-    val gender: String,
+    val gender: Int,
     val disease: String,
     val difficulty: String,
     val readingRate: Int,

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.possible.databinding.ActivityChildrenTestsBinding
 import com.example.possible.model.Child
+import com.example.possible.repo.local.SharedPref
 import com.example.possible.repo.local.database.LocalRepoImp
 import com.example.possible.ui.report.ReportActivity
 import com.example.possible.util.adapter.ChildrenAdapter
@@ -22,12 +23,13 @@ class ChildrenTests : AppCompatActivity(),ChildListener {
     private lateinit var children : ArrayList<Child>
     private lateinit var adapter : ChildrenAdapter
     private lateinit var db:LocalRepoImp
+    private val sharedPref = SharedPref(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityChildrenTestsBinding.inflate(layoutInflater)
         children= arrayListOf()
-        adapter = ChildrenAdapter(children, this)
+        adapter = ChildrenAdapter(children, this,sharedPref)
         db = LocalRepoImp(this)
         adapter.setTestMode(true)
         getAllChildren()

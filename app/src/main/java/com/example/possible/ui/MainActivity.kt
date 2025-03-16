@@ -16,7 +16,7 @@ import com.example.possible.repo.local.SharedPref
 import com.example.possible.repo.local.database.LocalRepoImp
 import com.example.possible.ui.math.MainMathActivity
 import com.example.possible.ui.profile.ProfileActivity
-import com.example.possible.ui.profile.children.AddChildActivity
+import com.example.possible.ui.profile.children.addChild.AddChildActivity
 import com.example.possible.ui.reading.ReadingMainActivity
 import com.example.possible.util.helper.ChildTraker
 import com.example.possible.util.helper.dataManager.AppDataManager

@@ -1,6 +1,5 @@
-package com.example.possible.repo.remote.api.register
+package com.example.possible.repo.remote.api.account
 
-import com.example.possible.repo.remote.response.login.RegisterResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -12,7 +11,7 @@ import retrofit2.http.Part
 
 interface UpdateUserDataService {
         @Multipart
-        @PUT("UpdateUser")
+        @PUT("Account/UpdateUser")
         suspend fun updateProfile(
             @Header("Authorization") token: String,
             @Part("Username") name: RequestBody,

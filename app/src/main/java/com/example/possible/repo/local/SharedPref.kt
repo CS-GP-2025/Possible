@@ -4,6 +4,11 @@ import android.content.Context
 import com.example.possible.model.User
 
 class SharedPref(context: Context) {
+
+    //
+    private val useCounterPref=context.getSharedPreferences("mode",Context.MODE_PRIVATE)
+
+
     private val sharedPref=context.getSharedPreferences("mode",Context.MODE_PRIVATE)
     private val profilePref=context.getSharedPreferences("profile",Context.MODE_PRIVATE)
     private val appPathPref=context.getSharedPreferences("path",Context.MODE_PRIVATE)
@@ -90,5 +95,11 @@ class SharedPref(context: Context) {
             testPref.edit().putString("q3", "").apply()
             testPref.edit().putString("q4", "").apply()
         }
+    //uses counter
+    fun setCounter(counter:Int){
+        useCounterPref.edit().putInt("counter",counter).apply()
+    }
+    fun getCounter():Int{
+        return useCounterPref.getInt("counter",0)}
 
 }

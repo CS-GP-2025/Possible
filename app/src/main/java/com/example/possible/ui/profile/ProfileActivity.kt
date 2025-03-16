@@ -1,23 +1,24 @@
 package com.example.possible.ui.profile
 
 import DialogBuilder
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.possible.databinding.ActivityProfileBinding
 import com.example.possible.repo.local.SharedPref
-import com.example.possible.ui.profile.children.AddChildActivity
+import com.example.possible.ui.profile.children.addChild.AddChildActivity
 import com.example.possible.ui.profile.children.Children
 import com.example.possible.ui.profile.children.testsForChildren.ChildrenTests
 import com.example.possible.ui.profile.profileManage.EditProfileActivity
-import com.example.possible.ui.signLogin.Login.LoginActivity
 import com.example.possible.util.helper.dataManager.AppDataManager
+import kotlin.system.exitProcess
 
 
 class ProfileActivity : AppCompatActivity() {
@@ -88,13 +89,6 @@ class ProfileActivity : AppCompatActivity() {
 
     }
 
-    /*private fun loadProfileImage() {
-        val savedUri = sharedPreferences.getImage()
-        if (savedUri != null) {
-            val uri = Uri.parse(savedUri)
-            binding.profileImage.setImageURI(uri)
-        }}*/
-
 
     override fun onResume() {
         super.onResume()
@@ -111,7 +105,7 @@ class ProfileActivity : AppCompatActivity() {
 
     }
     private fun logout() {
-        clearAppData(this)
+        clearAppDataAndRestart(this)
         Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
         finish()
     }
@@ -122,21 +116,28 @@ class ProfileActivity : AppCompatActivity() {
             binding.testsLL.visibility=View.GONE
         }
     }
-    private fun clearAppData(context: Context) {
-        context.cacheDir.deleteRecursively() // مسح الكاش
-        context.filesDir.deleteRecursively() // مسح الملفات
-        context.getExternalFilesDir(null)?.deleteRecursively() // مسح الملفات الخارجية
-        context.getSharedPreferences("profile", Context.MODE_PRIVATE).edit().clear().apply() // مسح SharedPreferences
-        context.getSharedPreferences("mode", Context.MODE_PRIVATE).edit().clear().apply() // مسح SharedPreferences
-        context.getSharedPreferences("path", Context.MODE_PRIVATE).edit().clear().apply() // مسح SharedPreferences
-        context.getSharedPreferences("test", Context.MODE_PRIVATE).edit().clear().apply() // مسح SharedPreferences
 
-        // إعادة تشغيل التطبيق
-        val intent = Intent(context, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-        context.startActivity(intent)
-        //Runtime.getRuntime().exit(0) // إغلاق التطبيق
+
+    @SuppressLint("ServiceCast")
+    fun clearAppDataAndRestart(context: Context) {
+        try {
+            // Clear app data
+            (context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager)?.clearApplicationUserData()
+
+            // Restart the app
+            val restartIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+            restartIntent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(restartIntent)
+            (context as? Activity)?.finish()
+
+            // Kill the app process
+            exitProcess(0)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
+
 
 
 

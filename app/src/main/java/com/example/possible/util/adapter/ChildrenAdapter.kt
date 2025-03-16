@@ -15,9 +15,12 @@ import com.bumptech.glide.Glide
 import com.example.possible.R
 import com.example.possible.databinding.ChildCardBinding
 import com.example.possible.model.Child
+import com.example.possible.repo.local.SharedPref
+import com.example.possible.util.helper.dataManager.AppDataManager
 import com.example.possible.util.listener.ChildListener
+import java.io.File
 
-class ChildrenAdapter(private var data: ArrayList<Child>, private val listener: ChildListener) :
+class ChildrenAdapter(private var data: ArrayList<Child>, private val listener: ChildListener ,private val pref: SharedPref) :
     RecyclerView.Adapter<ChildrenAdapter.ChildHolder>() {
 
     // Create ViewHolder class
@@ -73,19 +76,28 @@ class ChildrenAdapter(private var data: ArrayList<Child>, private val listener: 
         holder.binding.deleteBtn.setOnClickListener {
             listener.onDelete(position, child)
         }
+        if(pref.getRole()=="Specialist"){
+            holder.binding.deleteBtn.visibility=GONE
+        }
+        else{
+            holder.binding.deleteBtn.visibility=VISIBLE
+        }
+
 
         // Log the URI for debugging
         Log.d("ChildrenAdapter", "Image URI: ${child.imageUri}")
 
-        // Use Glide to load image from the URI
-        Glide.with(holder.binding.profileImage.context)
-            .load(child.imageUri.toUri())
-            .placeholder(R.drawable.go) // Placeholder image
-            .error(R.drawable.error_signal) // Error image
+
+        // Load the image using Glide
+        Glide.with(holder.itemView.context)
+            .load((child.imageUri).toUri())
+            .placeholder(R.drawable.go)
+            .error(R.drawable.error_signal)
             .into(holder.binding.profileImage)
     }
 
-    // Return the size of the data list
+
+        // Return the size of the data list
     override fun getItemCount(): Int {
         return data.size
     }

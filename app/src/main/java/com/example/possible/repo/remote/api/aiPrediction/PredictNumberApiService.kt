@@ -1,4 +1,4 @@
-package com.example.possible.repo.remote.api.prediction
+package com.example.possible.repo.remote.api.aiPrediction
 
 import com.example.possible.repo.remote.response.lettersNumbers.NumberApiResponse
 import okhttp3.MultipartBody

@@ -1,0 +1,144 @@
+package com.example.possible.ui.profile.children
+
+import android.content.Context
+import android.util.Log
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.possible.model.AllChildrenChildModel
+import com.example.possible.model.Child
+import com.example.possible.model.RemoteChild
+import com.example.possible.repo.local.SharedPref
+import com.example.possible.repo.local.database.LocalRepoImp
+import com.example.possible.repo.remote.RetrofitBuilder
+import com.example.possible.util.helper.dataManager.AppDataManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
+class ChildrenViewModel :ViewModel(){
+
+    private var _childrenRemote : MutableLiveData<List<RemoteChild>> = MutableLiveData()
+    val childrenRemote : MutableLiveData<List<RemoteChild>> = _childrenRemote
+
+    private var _allChildren : MutableLiveData<List<AllChildrenChildModel>> = MutableLiveData()
+    val allChildren : MutableLiveData<List<AllChildrenChildModel>> = _allChildren
+
+    private var _children : MutableLiveData<List<Child>> = MutableLiveData()
+    val children : MutableLiveData<List<Child>> = _children
+
+    fun deleteChild(onStart : () -> Unit,id:Int ,onFinish: () -> Unit,db: LocalRepoImp,pref: SharedPref){
+        deleteFromRemote(id,onStart,onFinish,db,pref)
+    }
+
+    private fun deleteFromLocal(id:Int,onFinish: () -> Unit,db:LocalRepoImp){
+        viewModelScope.launch {
+            val c= db.getChildById(id)
+            db.deleteChild(child =c)
+            withContext(Dispatchers.Main){
+                onFinish()
+            }
+        }
+    }
+
+    private fun deleteFromRemote(id:Int, onStart: () -> Unit, onFinish: () -> Unit, db:LocalRepoImp, pref: SharedPref){
+        onStart()
+        viewModelScope.launch {
+            try {
+                val key = "Bearer ${pref.getToken()}"
+                val response = RetrofitBuilder.deleteChildApiService.deleteChild(key,id)
+                if (response.isSuccessful && response.body()?.statusCode == 200) {
+                    deleteFromLocal(id, onFinish = onFinish, db)
+                } else {
+                    withContext(Dispatchers.Main) { onFinish()
+                        Log.d("DeleteChildViewModel", "Error: ")}
+
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onFinish()}
+                Log.d("DeleteChildViewModel", "Error: ")}
+            }
+        }
+
+
+     fun getChildrenFromApi(pref: SharedPref){
+        viewModelScope.launch(Dispatchers.IO){
+            val token = "Bearer ${pref.getToken()}"
+            val response = RetrofitBuilder.getUserChildrenApiService.getUserChildren(token)
+            if (response.isSuccessful) {
+                withContext(Dispatchers.Main) {
+                _childrenRemote.value = response.body()
+            }
+            }
+        }
+    }
+    fun getAllChildrenFromApi(pref: SharedPref){
+        viewModelScope.launch(Dispatchers.IO){
+            val token = "Bearer ${pref.getToken()}"
+            val response = RetrofitBuilder.getAllChildrenApiService.getAllChildren(token)
+            if (response.isSuccessful) {
+                withContext(Dispatchers.Main) {
+                    _allChildren.value = response.body()
+                }
+            }
+        }
+    }
+    fun storeAllChildrenIntoRoom(children: List<AllChildrenChildModel>,db:LocalRepoImp,context: Context){
+        viewModelScope.launch(Dispatchers.IO) {
+            for (child in children) {
+                val age =child.age
+                val name = child.name
+                val id = child.id
+                val imageUri = AppDataManager.downloadAndSaveChildImage(context, child.image,"${child.name}_${child.id}")
+                val localChild = Child(
+                    id, name, age, imageUri.toString(),child.gender,
+                    "","",
+                    0,0,
+                    0,0,
+                    "","",
+                    returnDate())
+                db.insertChild(localChild)
+            }
+            getChildren(db)
+        }
+    }
+
+
+
+     fun storeUserChildrenIntoRoom(children: List<RemoteChild>,db:LocalRepoImp,context: Context){
+        viewModelScope.launch(Dispatchers.IO) {
+            for (child in children) {
+                val age =child.age
+                val name = child.name
+                val id = child.id
+                val imageUri = AppDataManager.downloadAndSaveChildImage(context, child.image,"${child.name}_${child.id}")
+                val localChild = Child(
+                    id, name, age, imageUri.toString(),child.gender,
+                    "","",
+                    0,0,
+                    0,0,
+                    "","",
+                    returnDate())
+                db.insertChild(localChild)
+            }
+        getChildren(db)
+        }
+    }
+    fun getChildren(db:LocalRepoImp){
+        viewModelScope.launch (Dispatchers.IO){
+            val children = db.getAllChildren()
+            withContext(Dispatchers.Main){
+                _children.value = children
+            }
+
+        }
+    }
+
+    private fun returnDate(): String {
+        val currentDate = LocalDateTime.now()
+        return currentDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+    }
+
+}

@@ -1,16 +1,13 @@
 package com.example.possible.ui.specialist
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.possible.databinding.ActivitySpecialistMainBinding
 import com.example.possible.repo.local.SharedPref
 import com.example.possible.ui.profile.ProfileActivity
-import com.example.possible.ui.profile.children.AddChildActivity
 import com.example.possible.ui.profile.children.Children
 import com.example.possible.ui.specialist.tests.TestTypesActivity
 import com.example.possible.ui.specialist.tests.TestsActivity
@@ -44,11 +41,7 @@ class SpecialistMainActivity : AppCompatActivity() {
            val intent = Intent(this, TestsActivity::class.java)
            startActivity(intent)
         }
-        binding.newChildBtn.setOnClickListener {
-            val intent = Intent(this, AddChildActivity::class.java)
-            intent.putExtra("mode", "add")
-            startActivity(intent)
-        }
+
         binding.profileIV.setOnClickListener {
             goToProfile()
         }

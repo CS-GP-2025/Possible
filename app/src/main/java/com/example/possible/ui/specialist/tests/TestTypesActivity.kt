@@ -21,9 +21,8 @@ class TestTypesActivity : AppCompatActivity() {
     }
     private fun setupControllers(){
         binding.Dyslexia.setOnClickListener {
-            val intent = Intent(this, SentenceMainActivity::class.java)
-            intent.putExtra("mode","combining")
-            startActivity(intent)
+            goToSetExam("CCC","Dyslexia")
+
         }
         binding.DyscalculiaC.setOnClickListener {
             goToSetExam("AAA","Dyscalculia")

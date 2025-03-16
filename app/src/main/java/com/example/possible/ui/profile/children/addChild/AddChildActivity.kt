@@ -1,4 +1,4 @@
-package com.example.possible.ui.profile.children
+package com.example.possible.ui.profile.children.addChild
 
 import android.Manifest
 import android.content.Intent
@@ -6,14 +6,16 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModelProvider
 import com.example.possible.R
 import com.example.possible.databinding.ActivityAddChildBinding
 import com.example.possible.model.Child
+import com.example.possible.repo.local.SharedPref
 import com.example.possible.repo.local.database.LocalRepoImp
 import com.example.possible.ui.report.ReportActivity
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -21,14 +23,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class AddChildActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddChildBinding
     private lateinit var db: LocalRepoImp
     private var name = ""
-    private var gender = "Male"
+    private var gender = 1
     private var age = 1
     private var imageUri: Uri? = null
     private var difficulty = ""
@@ -45,6 +45,8 @@ class AddChildActivity : AppCompatActivity() {
     private var mode = ""
     private var childId = 0
     private var child: Child? = null
+    private lateinit var pref:SharedPref
+    private lateinit var viewModel: AddChildViewModel
 
     private companion object {
         const val GALLERY_REQUEST_CODE = 101
@@ -52,8 +54,11 @@ class AddChildActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddChildBinding.inflate(layoutInflater)
+        checkAndRequestPermissions()
+        viewModel = ViewModelProvider(this)[AddChildViewModel::class.java]
         binding.difficultyLL.visibility = android.view.View.GONE
         db = LocalRepoImp(this)
+        pref = SharedPref(this)
         setContentView(binding.root)
         mode = intent.getStringExtra("mode")!!
         if (mode == EDIT_MODE){
@@ -119,7 +124,9 @@ class AddChildActivity : AppCompatActivity() {
 
     private fun setupGenderPicker() {
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
-            gender = if (checkedId == R.id.femaleRB) "Female" else "Male"
+            gender = if (checkedId == R.id.femaleRB) 0 else 1
+            Log.d("GenderValue", gender.toString())
+
         }
 
     }
@@ -186,9 +193,23 @@ class AddChildActivity : AppCompatActivity() {
         else {
             name = binding.name.text.toString()
             disease = binding.diseasesEt.text.toString()
-            saveChild()
-            Toast.makeText(this, "Child added successfully", Toast.LENGTH_SHORT).show()
-            finish()
+            Log.d("GenderValue", "$gender 11")
+
+            viewModel.addChild(
+                onStart = {onStarting()},
+                name,
+                age,
+                gender,
+                imageUri.toString(),
+                pref.getProfileDetails().name,
+                difficulty,
+                disease,
+                pref,
+                 this,
+                 db,
+                onEnd = { afterAddOrEdit() }
+            )
+            //finish()
         }
     }
     private fun validateAndUpdateChild() {
@@ -206,15 +227,23 @@ class AddChildActivity : AppCompatActivity() {
             disease = binding.diseasesEt.text.toString()
             difficulty = binding.difficultyEt.text.toString()
             updateChild()
-            Toast.makeText(this, "Child updated successfully", Toast.LENGTH_SHORT).show()
-            finish()
-        }
+             }
     }
     private fun updateChild() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val updatedChild = Child(childId, name, age, imageUri.toString(), gender, disease, difficulty, readingRate, writingRate,readingDays,writingDays,latestReadingDay,latestWritingDay,dateOfCreation)
-             db.updateChild(updatedChild)
-    }
+        viewModel.updateChild(
+            { onStarting() },
+            childId,
+            name,
+            age,
+            imageUri.toString(),
+            gender,
+            disease,
+            difficulty,
+            db,
+            this,
+            pref,
+            { afterAddOrEdit() }
+        )
     }
     @OptIn(DelicateCoroutinesApi::class)
     private fun getTheChildToView(childId: Int){
@@ -226,7 +255,6 @@ class AddChildActivity : AppCompatActivity() {
                     name = child!!.name
                     imageUri = Uri.parse(child!!.imageUri)
                     age = child!!.age
-                    gender = child!!.gender
                     disease = child!!.disease
                     difficulty = child!!.difficulty
                     readingRate = child!!.readingRate
@@ -245,7 +273,7 @@ class AddChildActivity : AppCompatActivity() {
                     writingRate = child!!.writingRate
                     binding.profileIV.setImageURI(Uri.parse(child!!.imageUri))
                     binding.agePicker.value = child!!.age
-                    if (child!!.gender == "Female") {
+                    if (child!!.gender == 0) {
                         binding.femaleRB.isChecked = true
                     } else {
                         binding.maleRB.isChecked = true }
@@ -257,21 +285,21 @@ class AddChildActivity : AppCompatActivity() {
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun saveChild() {
-        GlobalScope.launch(Dispatchers.IO) {
-            val imageUriString = imageUri.toString()
-            val newChild = Child(0, name, age, imageUriString,gender, disease, difficulty,0,0,0,0,"","",returnDate() )
-            db.insertChild(newChild)
-            withContext(Dispatchers.Main) {
-                Toast.makeText(this@AddChildActivity, "Child added successfully", Toast.LENGTH_SHORT).show()
-            }
-        }
+
+    private fun afterAddOrEdit(){
+        Toast.makeText(this, "Done successfully", Toast.LENGTH_SHORT).show()
+        binding.loadingView.visibility = android.view.View.GONE
+        binding.doneBtn.isEnabled = true
+        finish()
+
     }
-  private fun returnDate(): String {
-      val currentDate = LocalDateTime.now()
-      val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-      return formattedDate
-  }
+    private fun onStarting(){
+        Toast.makeText(this, "Wait ...", Toast.LENGTH_SHORT).show()
+        binding.loadingView.visibility = android.view.View.VISIBLE
+        binding.doneBtn.isEnabled = false
+    }
+
+
+
 
 }
