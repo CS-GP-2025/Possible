@@ -69,17 +69,26 @@ class AddingFragment : Fragment() {
         resultArray=arr
         binding.resultAdapter.adapter= ResultAdapter(resultArray)
     }
-    private fun getTheSum():Int{
-        var sum=0
-        var dub=1
-        var i=0
-        while (i<resultArray.size){
-            sum+=resultArray[i]*dub
-            dub*=10
-            i++
+    private fun getTheSum(): Int {
+        var sum = 0
+        try {
+            if (!::resultArray.isInitialized || resultArray.isEmpty()) {
+                throw IllegalStateException("resultArray is not initialized or is empty.")
+            }
+
+            var dub = 1
+            var i = 0
+            while (i < resultArray.size) {
+                sum += resultArray[i] * dub
+                dub *= 10
+                i++
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         return sum
     }
+
     fun getResult():Int{
         return if( question.c == getTheSum()) 2 else 0
     }

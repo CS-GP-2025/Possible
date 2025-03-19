@@ -1,60 +1,137 @@
 package com.example.possible.ui.profile.children.testsForChildren
 
+import DialogBuilder
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.possible.R
+import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
+import com.example.possible.databinding.FragmentTestsDoneBinding
+import com.example.possible.model.SolvedTest
+import com.example.possible.model.Test
+import com.example.possible.repo.local.database.LocalRepoImp
+import com.example.possible.ui.test.TestResultActivity
+import com.example.possible.util.adapter.SolvedTestAdapter
+import com.example.possible.util.listener.TestListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [TestsDoneFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class TestsDoneFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
+class TestsDoneFragment : Fragment() , TestListener{
+    private lateinit var binding: FragmentTestsDoneBinding
+     private var id = 0
+     fun newInstance(id:Int):TestsDoneFragment{
+         val args = Bundle()
+         args.putInt("id",id)
+         val fragment = TestsDoneFragment()
+         fragment.arguments = args
+         return fragment
+     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+
         }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tests_done, container, false)
+        binding = FragmentTestsDoneBinding.inflate(inflater, container, false)
+         id = arguments?.getInt("id")!!
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TestsDoneFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TestsDoneFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+
+    private fun setTests(tests: List<SolvedTest>) {
+        val adapter = SolvedTestAdapter(tests as ArrayList<SolvedTest>,this)
+        binding.recyclerView.adapter = adapter
     }
+
+    private fun  getDoneTests(id:Int){
+        lifecycleScope.launch(Dispatchers.IO) {
+            val db = LocalRepoImp(requireContext())
+            val tests = db.getChildById(id).childSolvedTests
+            withContext(Dispatchers.Main){
+                if(tests.isEmpty()){
+
+                    binding.hint.visibility = View.VISIBLE
+                    binding.recyclerView.visibility = View.GONE
+            }
+            else{
+                    binding.hint.visibility = View.GONE
+                    binding.recyclerView.visibility = View.VISIBLE
+            setTests(tests)
+        }
+            }
+
+        }
+
+    }
+
+    override fun onTestClick(test: Test) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDeleteClick(test: Test, position: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onSolvedClick(test: SolvedTest, position: Int) {
+        goToTheResult(test)
+    }
+
+    override fun onSolvedDelete(test: SolvedTest, position: Int) {
+        DialogBuilder.showAlertDialog(requireContext(),
+            "After deleting , you can do this exam again from toDo tests list?",
+            "Delete Test",
+            "Confirm",
+            "Cancel",
+            onConfirm = {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val db = LocalRepoImp(requireContext())
+                    val child = db.getChildById(id)
+                    val childSolvedTests = child.childSolvedTests as MutableList<SolvedTest>
+                    childSolvedTests.remove(test)
+
+                    db.updateSolvedTests(id, childSolvedTests)
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), "Deleted", Toast.LENGTH_SHORT).show()
+                        getDoneTests(id)
+                        binding.recyclerView.adapter!!.notifyItemRemoved(position)
+                        binding.recyclerView.adapter!!.notifyItemRangeChanged(position, childSolvedTests.size)
+                    }
+                }
+            },
+            onCancel = {
+
+            })
+
+    }
+    private fun goToTheResult(solved:SolvedTest){
+        val intent = Intent(requireContext(), TestResultActivity::class.java)
+        intent.putExtra("testName",solved.testName)
+        intent.putExtra("testType",solved.testType)
+        intent.putExtra("q1r",solved.q1Points)
+        intent.putExtra("q2r",solved.q2Points)
+        intent.putExtra("q3r",solved.q3Points)
+        intent.putExtra("q4r",solved.q4Points)
+        intent.putExtra("childId",id)
+
+        intent.putExtra("totalr",solved.totalPoints)
+        intent.putExtra("date",solved.date)
+        startActivity(intent)
+    }
+    override fun onResume() {
+        super.onResume()
+        getDoneTests(id)
+
+    }
+
 }

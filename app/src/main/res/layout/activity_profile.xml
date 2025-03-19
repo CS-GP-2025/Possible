@@ -157,6 +157,32 @@
                     android:rotationY="180"
                     android:src="@drawable/back_arrow" />
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/locall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20sp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/font"
+                    android:text="Local Server IP"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="20dp"
+                    android:rotationX="2"
+                    android:rotationY="180"
+                    android:src="@drawable/back_arrow" />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/logoutLL"

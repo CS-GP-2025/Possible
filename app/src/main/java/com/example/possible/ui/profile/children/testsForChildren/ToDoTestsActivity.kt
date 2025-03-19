@@ -21,10 +21,11 @@ class ToDoTestsActivity : AppCompatActivity() {
         setContentView(binding.root)
         val tabLayout = binding.tabLayout
         val viewPager = binding.viewPager
+        val id = intent.getIntExtra("childId",0)
 
         val adapter = FragmentAdapter(this, arrayListOf(
-            TestsToDoFragment(),
-            TestsDoneFragment()
+            TestsToDoFragment().newInstance(id),
+            TestsDoneFragment().newInstance(id)
         )
         )
         viewPager.adapter = adapter

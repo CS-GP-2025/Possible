@@ -19,14 +19,17 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewResult"
+            android:id="@+id/endSession"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:background="@drawable/custom_btn"
+            android:backgroundTint="@color/gra"
             android:fontFamily="@font/font"
+            android:layout_weight="1"
             android:padding="10dp"
-            android:text="End session" />
+            android:textColor="@color/white"
+            android:text="I've finished it" />
 
         <TextView
             android:id="@+id/pages"
@@ -36,22 +39,12 @@
             android:layout_margin="5dp"
             android:fontFamily="@font/font"
             android:gravity="center"
+            android:layout_weight="1"
             android:text="1/4"
             android:textColor="@color/black"
             android:textSize="25sp" />
 
-        <TextView
-            android:id="@+id/result"
-            android:layout_width="wrap_content"
-            android:layout_height="58dp"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:fontFamily="@font/font"
-            android:gravity="center"
-            android:text="0"
-            android:textColor="@color/black"
-            android:textSize="25sp" />
+
     </LinearLayout>
 
     <androidx.viewpager2.widget.ViewPager2

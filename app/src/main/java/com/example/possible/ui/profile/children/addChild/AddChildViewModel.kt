@@ -10,6 +10,7 @@ import com.example.possible.model.Child
 import com.example.possible.repo.local.SharedPref
 import com.example.possible.repo.local.database.LocalRepoImp
 import com.example.possible.repo.remote.RetrofitBuilder
+import com.example.possible.util.helper.InterNetHelper
 import com.example.possible.util.helper.dataFormater.DataFormater
 import com.example.possible.util.helper.dataManager.AppDataManager
 import kotlinx.coroutines.Dispatchers
@@ -62,6 +63,10 @@ class AddChildViewModel : ViewModel() {
         onEnd: () -> Unit
 
     ) {
+        if(!InterNetHelper.isInternetAvailable(context)){
+            Toast.makeText(context, "Check your internet connection, try again!", Toast.LENGTH_SHORT).show()
+            return
+        }
         val clientFile: File = DataFormater.uriToFile(context, clientImage)!!
         val requestFile = clientFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
         val imagePart = MultipartBody.Part.createFormData("ClientFile", clientFile.name, requestFile)
@@ -118,7 +123,7 @@ class AddChildViewModel : ViewModel() {
     ) {
         val child = Child(
             id, name, age, imageUri, genderInt, disease, difficulty,
-            0, 0, 0, 0, "", "", returnDate()
+            0, 0, 0, 0, "", "", returnDate(), emptyList(), emptyList()
         )
         db.insertChild(child)
         withContext(Dispatchers.Main) {
@@ -133,7 +138,10 @@ class AddChildViewModel : ViewModel() {
     }
 
     fun updateChild(onStart: () -> Unit,id: Int, name: String, age: Int, imageUri: String, gender: Int,dis:String,diff:String,db:LocalRepoImp,context: Context,pref: SharedPref,onEnd: () -> Unit){
-
+           if(!InterNetHelper.isInternetAvailable(context)){
+               Toast.makeText(context, "Check your internet connection, try again!", Toast.LENGTH_SHORT).show()
+               return
+           }
            viewModelScope.launch(Dispatchers.IO){
                try {
 
@@ -180,7 +188,9 @@ class AddChildViewModel : ViewModel() {
                     oChd.writingDays,
                     oChd.latestReadingDay,
                     oChd.latestWritingDay,
-                    oChd.date
+                    oChd.date,
+                    oChd.childTests,
+                    oChd.childSolvedTests
                 )
                 db.updateChild(newChild)
                 withContext(Dispatchers.Main){

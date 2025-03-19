@@ -1,60 +1,131 @@
-package com.example.possible.ui.profile.children.testsForChildren
+    package com.example.possible.ui.profile.children.testsForChildren
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.example.possible.R
+    import android.content.Intent
+    import android.os.Bundle
+    import androidx.fragment.app.Fragment
+    import android.view.LayoutInflater
+    import android.view.View
+    import android.view.ViewGroup
+    import androidx.lifecycle.lifecycleScope
+    import com.example.possible.databinding.FragmentTestsToDoBinding
+    import com.example.possible.model.SolvedTest
+    import com.example.possible.model.Test
+    import com.example.possible.repo.local.database.LocalRepoImp
+    import com.example.possible.ui.test.dyscalculiaTest.DyscalculiaTestActivity
+    import com.example.possible.ui.test.dysgraphiaTest.DysgraphiaTestActivity
+    import com.example.possible.util.adapter.TestAdapter
+    import com.example.possible.util.listener.TestListener
+    import kotlinx.coroutines.Dispatchers
+    import kotlinx.coroutines.launch
+    import kotlinx.coroutines.withContext
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+    class TestsToDoFragment : Fragment() , TestListener {
+        private lateinit var binding: FragmentTestsToDoBinding
+        private var id = 0
+        fun newInstance(id:Int):TestsToDoFragment{
+            val args = Bundle()
+            args.putInt("id",id)
+            val fragment = TestsToDoFragment()
+            fragment.arguments = args
+            return fragment
+        }
 
-/**
- * A simple [Fragment] subclass.
- * Use the [TestsToDoFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class TestsToDoFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+        override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
-    override fun onCreateView(
+        }
+        }
+
+        override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+        ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tests_to_do, container, false)
-    }
+        binding = FragmentTestsToDoBinding.inflate(inflater, container, false)
+             id = arguments?.getInt("id")!!
+        return binding.root
+        }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TestsToDoFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TestsToDoFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+
+        private fun setTests(tests: List<Test>) {
+            val adapter = TestAdapter(tests as ArrayList<Test>,this)
+            binding.recyclerView.adapter = adapter
+            adapter.toDoMode()
+        }
+
+        private fun  getToDoTests(id:Int){
+            val db = LocalRepoImp(requireContext())
+            lifecycleScope.launch(Dispatchers.IO) {
+                val tests = db.getChildById(id).childTests
+                val solvedTests = db.getChildById(id).childSolvedTests
+                val unSolvedTests = filterUnSolvedTests(tests,solvedTests)
+                withContext(Dispatchers.Main){
+                    if(unSolvedTests.isEmpty()){
+                        binding.hint.visibility = View.VISIBLE
+                        binding.recyclerView.visibility = View.GONE
+                    }
+                    else{
+                        binding.hint.visibility = View.GONE
+                        binding.recyclerView.visibility = View.VISIBLE
+                        setTests(unSolvedTests)
+                    }
                 }
+
             }
+        }
+
+        private fun filterUnSolvedTests(tests: List<Test>, solvedTests: List<SolvedTest>): List<Test> {
+            val unSolvedTests = mutableListOf<Test>()
+               for(test in tests){
+                   var isSolved = false
+                   for(solvedTest in solvedTests) {
+                       if (test.name == solvedTest.testName) {
+                           isSolved = true
+                           break
+                       }
+                   }
+                   if(!isSolved){
+                       unSolvedTests.add(test)
+                   }
+               }
+            return unSolvedTests
+
+        }
+
+
+
+
+        override fun onTestClick(test: Test) {
+
+            val intent = if (getCategory(test.name) == "BBB" || getCategory(test.name) == "CCC") {
+                Intent(requireContext(), DysgraphiaTestActivity::class.java)
+            } else {
+                Intent(requireContext(), DyscalculiaTestActivity::class.java)
+            }
+            intent.putExtra("test", test.name)
+            intent.putExtra("childId",id)
+            startActivity(intent)
+        }
+
+        override fun onDeleteClick(test: Test, position: Int) {
+        TODO("Not yet implemented")
+        }
+
+        override fun onSolvedClick(test: SolvedTest, position: Int) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onSolvedDelete(test: SolvedTest, position: Int) {
+            TODO("Not yet implemented")
+        }
+        private fun getCategory(examName: String): String {
+            return examName.substring(6)
+        }
+        override fun onResume() {
+            super.onResume()
+            getToDoTests(id)
+        }
+
     }
-}

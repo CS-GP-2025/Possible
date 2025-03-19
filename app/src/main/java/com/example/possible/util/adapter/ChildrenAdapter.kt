@@ -26,6 +26,13 @@ class ChildrenAdapter(private var data: ArrayList<Child>, private val listener: 
     // Create ViewHolder class
     class ChildHolder(val binding: ChildCardBinding) : RecyclerView.ViewHolder(binding.root)
     private  var testsMode=false
+    private var viewMode=false
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setViewMode(mode: Boolean) {
+        viewMode = mode
+        notifyDataSetChanged()
+    }
 
 
 
@@ -59,18 +66,36 @@ class ChildrenAdapter(private var data: ArrayList<Child>, private val listener: 
     }
 
     // Bind data to the ViewHolder
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ChildHolder, position: Int) {
         if (testsMode) {
             holder.binding.deleteBtn.visibility = GONE
             holder.binding.testIcon.visibility = VISIBLE
         }
+
+
+        if (viewMode) {
+            holder.binding.deleteBtn.visibility = GONE
+            holder.binding.testIcon.visibility = GONE
+        }
+
         val child = data[position]
 
         // Set the name text
         holder.binding.name.text = child.name
 
+
+        val toDoTests = child.childTests.size - child.childSolvedTests.size
+        // Set the test icon text
+        if (testsMode&&toDoTests != 0) {
+            holder.binding.testIcon.visibility = VISIBLE
+            holder.binding.testIcon.text = toDoTests.toString()
+        } else {
+            holder.binding.testIcon.visibility = GONE
+        }
+
         // Set click listeners
-        holder.binding.childCard.setOnClickListener {
+        holder.binding.root.setOnClickListener {
             listener.onClick(child)
         }
         holder.binding.deleteBtn.setOnClickListener {
@@ -79,9 +104,7 @@ class ChildrenAdapter(private var data: ArrayList<Child>, private val listener: 
         if(pref.getRole()=="Specialist"){
             holder.binding.deleteBtn.visibility=GONE
         }
-        else{
-            holder.binding.deleteBtn.visibility=VISIBLE
-        }
+
 
 
         // Log the URI for debugging

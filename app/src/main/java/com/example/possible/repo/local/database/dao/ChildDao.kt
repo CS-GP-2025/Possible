@@ -5,6 +5,8 @@ import androidx.room.Query
 import com.example.possible.model.Child
 
 import androidx.room.*
+import com.example.possible.model.SolvedTest
+import com.example.possible.model.Test
 
 @Dao
 interface ChildDao {
@@ -21,6 +23,9 @@ interface ChildDao {
 
     @Update
     suspend fun editChild(child: Child)
+
+    @Query("DELETE FROM children")
+    suspend fun deleteAllChildren()
 
 
 
@@ -44,6 +49,13 @@ interface ChildDao {
     suspend fun updateLatestReadingDay(childId: Int, latestReadingDay: String)
     @Query("UPDATE children SET latestWritingDay = :latestWritingDay WHERE id = :childId")
     suspend fun updateLatestWritingDay(childId: Int, latestWritingDay: String)
+
+    //tests update
+    @Query("UPDATE children SET childTests = :childTests WHERE id = :childId")
+    suspend fun updateChildTests(childId: Int, childTests: List<Test>)
+
+    @Query("UPDATE children SET childSolvedTests = :solvedTests WHERE id = :childId")
+    suspend fun updateSolvedTests(childId: Int, solvedTests: List<SolvedTest>)
 
 
 }

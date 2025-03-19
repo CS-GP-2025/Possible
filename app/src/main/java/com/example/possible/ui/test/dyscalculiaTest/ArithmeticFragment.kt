@@ -51,25 +51,24 @@ class ArithmeticFragment : Fragment() {
         firstResult = sequence[3]
         secondResult = sequence[5]
     }
-     fun getResults():Int{
-        var result = 0
-        val firstInput = if(binding.fourth.text.toString().isNotEmpty()){
-            binding.fourth.text.toString().toInt()
-        } else{
-            0
+    fun getResults(): Int {
+        return try {
+            if (!::binding.isInitialized) {
+                throw IllegalStateException("Binding is not initialized.")
+            }
+
+            val firstInput = binding.fourth.text.toString().toIntOrNull() ?: -1
+            val secondInput = binding.sixth.text.toString().toIntOrNull() ?: -1
+
+            when {
+                firstInput == firstResult && secondInput == secondResult -> 2
+                firstInput == firstResult || secondInput == secondResult -> 1
+                else -> 0
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            0 // بترجع 0 في حالة حدوث أي خطأ.
         }
-        val secondInput = if(binding.sixth.text.toString().isNotEmpty()){
-            binding.sixth.text.toString().toInt()
-        } else{
-            0
-        }
-        if(firstInput == firstResult && secondInput == secondResult){
-            result = 2
-        }
-        else if(firstInput == firstResult || secondInput == secondResult){
-            result = 1
-        }
-        return result
     }
 
 }

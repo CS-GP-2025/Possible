@@ -43,7 +43,6 @@ class SentenceCombiningFragment : Fragment() {
         if(sentence!=""){
             val sentenceQues = TestDecoder.decodeSentenceCombining(sentence!!)
             getTheSentences(sentenceQues)
-            Toast.makeText(requireContext(), "${sentence}", Toast.LENGTH_SHORT).show()
         }
         else{
             val sentenceQues = SentenceQuestions.getRandomCombingSentence()

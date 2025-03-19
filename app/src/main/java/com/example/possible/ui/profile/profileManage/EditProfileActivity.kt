@@ -109,7 +109,7 @@ class EditProfileActivity : AppCompatActivity() {
             val name=binding.name.text.toString()
             val email=binding.emailET.text.toString()
             val password=binding.passwordET.text.toString()
-            val imageFile = DataFormater.uriToFile(this,imageUriString!!)!!
+            val imageFile = DataFormater.uriToFile(this,imageUriString!!)?:return@setOnClickListener
             val roleNumber = AppDataManager.getRoleForApi(sharedPreferences)
             viewModel.update(name,email,password,roleNumber,imageFile,this,binding){
                 onProfileUpdateSuccess()

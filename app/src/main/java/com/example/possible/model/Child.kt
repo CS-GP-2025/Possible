@@ -20,5 +20,7 @@ data class Child(
     val writingDays :Int,
     val latestReadingDay:String,
     val latestWritingDay:String,
-    val date:String
+    val date:String,
+    val childTests:List<Test>,
+    val childSolvedTests:List<SolvedTest>
 )

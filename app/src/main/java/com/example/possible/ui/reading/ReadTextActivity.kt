@@ -185,9 +185,12 @@ class ReadTextActivity : AppCompatActivity(), TextListener {
     }
 
     override fun onDestroy() {
+       try{
         super.onDestroy()
         speechRecognizer.destroy()
-        pulseAnimator.cancel()
+        pulseAnimator.cancel()} catch (_: Exception){
+           Toast.makeText(this, "ok", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onClick(text: String) {

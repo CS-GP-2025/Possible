@@ -2,6 +2,7 @@ package com.example.possible.ui.profile.children
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +12,7 @@ import com.example.possible.model.RemoteChild
 import com.example.possible.repo.local.SharedPref
 import com.example.possible.repo.local.database.LocalRepoImp
 import com.example.possible.repo.remote.RetrofitBuilder
+import com.example.possible.util.helper.InterNetHelper
 import com.example.possible.util.helper.dataManager.AppDataManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,12 +21,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class ChildrenViewModel :ViewModel(){
-
-    private var _childrenRemote : MutableLiveData<List<RemoteChild>> = MutableLiveData()
-    val childrenRemote : MutableLiveData<List<RemoteChild>> = _childrenRemote
-
-    private var _allChildren : MutableLiveData<List<AllChildrenChildModel>> = MutableLiveData()
-    val allChildren : MutableLiveData<List<AllChildrenChildModel>> = _allChildren
 
     private var _children : MutableLiveData<List<Child>> = MutableLiveData()
     val children : MutableLiveData<List<Child>> = _children
@@ -63,29 +59,50 @@ class ChildrenViewModel :ViewModel(){
         }
 
 
-     fun getChildrenFromApi(pref: SharedPref){
+     fun getUserChildrenFromApi(onStart: () -> Unit, context: Context,db:LocalRepoImp,pref: SharedPref, onFinish: () -> Unit){
+         if(!InterNetHelper.isInternetAvailable(context)){
+             Toast.makeText(context, "Check your internet connection", Toast.LENGTH_SHORT).show()
+             return
+         }
+         onStart()
         viewModelScope.launch(Dispatchers.IO){
+          try {
+
             val token = "Bearer ${pref.getToken()}"
             val response = RetrofitBuilder.getUserChildrenApiService.getUserChildren(token)
             if (response.isSuccessful) {
-                withContext(Dispatchers.Main) {
-                _childrenRemote.value = response.body()
+                storeUserChildrenIntoRoom(response.body()!!,db,context ,onFinish)
+
             }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                onFinish()
             }
+          }
         }
     }
-    fun getAllChildrenFromApi(pref: SharedPref){
+    fun getAllChildrenFromApi(onStart: () -> Unit,context: Context,db:LocalRepoImp,pref: SharedPref,onFinish: () -> Unit){
+        if(!InterNetHelper.isInternetAvailable(context)){
+            Toast.makeText(context, "Check your internet connection", Toast.LENGTH_SHORT).show()
+            return
+        }
+        deleteAllChildren(db)
+        onStart()
         viewModelScope.launch(Dispatchers.IO){
-            val token = "Bearer ${pref.getToken()}"
+            try {val token = "Bearer ${pref.getToken()}"
             val response = RetrofitBuilder.getAllChildrenApiService.getAllChildren(token)
             if (response.isSuccessful) {
-                withContext(Dispatchers.Main) {
-                    _allChildren.value = response.body()
-                }
-            }
-        }
+                storeAllChildrenIntoRoom(response.body()!!,db,context,onFinish )
+
+            }} catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                onFinish() }
+
+        }}
     }
-    fun storeAllChildrenIntoRoom(children: List<AllChildrenChildModel>,db:LocalRepoImp,context: Context){
+    private fun storeAllChildrenIntoRoom(children: List<AllChildrenChildModel>, db:LocalRepoImp, context: Context,onFinish: () -> Unit){
         viewModelScope.launch(Dispatchers.IO) {
             for (child in children) {
                 val age =child.age
@@ -98,16 +115,20 @@ class ChildrenViewModel :ViewModel(){
                     0,0,
                     0,0,
                     "","",
-                    returnDate())
+                    returnDate()
+                ,emptyList(),emptyList())
                 db.insertChild(localChild)
             }
             getChildren(db)
+            withContext(Dispatchers.Main) {
+                onFinish()
+            }
         }
     }
 
 
 
-     fun storeUserChildrenIntoRoom(children: List<RemoteChild>,db:LocalRepoImp,context: Context){
+     private fun storeUserChildrenIntoRoom(children: List<RemoteChild>, db:LocalRepoImp, context: Context,onFinish: () -> Unit){
         viewModelScope.launch(Dispatchers.IO) {
             for (child in children) {
                 val age =child.age
@@ -120,10 +141,14 @@ class ChildrenViewModel :ViewModel(){
                     0,0,
                     0,0,
                     "","",
-                    returnDate())
+                    returnDate(),
+                    emptyList(),emptyList())
                 db.insertChild(localChild)
             }
         getChildren(db)
+            withContext(Dispatchers.Main) {
+                onFinish()
+            }
         }
     }
     fun getChildren(db:LocalRepoImp){
@@ -134,6 +159,13 @@ class ChildrenViewModel :ViewModel(){
             }
 
         }
+    }
+    private fun deleteAllChildren(db:LocalRepoImp){
+        viewModelScope.launch (Dispatchers.IO){
+            db.deleteAllChildren()
+            getChildren(db)
+        }
+
     }
 
     private fun returnDate(): String {

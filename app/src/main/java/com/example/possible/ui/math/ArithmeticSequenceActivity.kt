@@ -1,11 +1,10 @@
 package com.example.possible.ui.math
 
+import DialogBuilder
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.possible.R
@@ -85,7 +84,6 @@ class ArithmeticSequenceActivity : AppCompatActivity() {
             }
 
             if(firstInput == firstResult && secondInput == secondResult){
-                Toast.makeText(this, "Correct", LENGTH_SHORT).show()
                 binding.celeprationAnim.visibility = View.VISIBLE
                 binding.celeprationAnim.playAnimation()
                 Handler().postDelayed({

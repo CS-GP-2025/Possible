@@ -6,367 +6,195 @@ import com.example.possible.model.SentenceCompleting
 object SentenceQuestions {
 
     private val sentenceCombiningQuestions = listOf(
-        SentenceCombining(
-            "The quick brown fox",
-            "jumps over the lazy dog",
-            "The quick brown fox jumps over the lazy dog"
-        ),
-        SentenceCombining(
-            "She sells seashells",
-            "by the seashore",
-            "She sells seashells by the seashore"
-        ),
-        SentenceCombining(
-            "I think, therefore",
-            "I am",
-            "I think, therefore I am"
-        ),
-        SentenceCombining(
-            "To be or not to be",
-            "that is the question",
-            "To be or not to be that is the question"
-        ),
-        SentenceCombining(
-            "All that glitters",
-            "is not gold",
-            "All that glitters is not gold"
-        ),
-        SentenceCombining(
-            "A journey of a thousand miles",
-            "begins with a single step",
-            "A journey of a thousand miles begins with a single step"
-        ),
-        SentenceCombining(
-            "Ask not what your country can do for you",
-            "ask what you can do for your country",
-            "Ask not what your country can do for you ask what you can do for your country"
-        ),
-        SentenceCombining(
-            "The only thing we have to fear",
-            "is fear itself",
-            "The only thing we have to fear is fear itself"
-        ),
-        SentenceCombining(
-            "That's one small step for man",
-            "one giant leap for mankind",
-            "That's one small step for man one giant leap for mankind"
-        ),
-        SentenceCombining(
-            "In the beginning",
-            "God created the heavens and the earth",
-            "In the beginning God created the heavens and the earth"
-        ),
-        SentenceCombining(
-            "The early bird",
-            "catches the worm",
-            "The early bird catches the worm"
-        ),
-        SentenceCombining(
-            "A picture is worth",
-            "a thousand words",
-            "A picture is worth a thousand words"
-        ),
-        SentenceCombining(
-            "When in Rome",
-            "do as the Romans do",
-            "When in Rome do as the Romans do"
-        ),
-        SentenceCombining(
-            "The pen is mightier",
-            "than the sword",
-            "The pen is mightier than the sword"
-        ),
-        SentenceCombining(
-            "Actions speak",
-            "louder than words",
-            "Actions speak louder than words"
-        ),
-        SentenceCombining(
-            "Beauty is in the eye",
-            "of the beholder",
-            "Beauty is in the eye of the beholder"
-        ),
-        SentenceCombining(
-            "Necessity is the mother",
-            "of invention",
-            "Necessity is the mother of invention"
-        ),
-        SentenceCombining(
-            "Fortune favors",
-            "the bold",
-            "Fortune favors the bold"
-        ),
-        SentenceCombining(
-            "Birds of a feather",
-            "flock together",
-            "Birds of a feather flock together"
-        ),
-        SentenceCombining(
-            "A watched pot",
-            "never boils",
-            "A watched pot never boils"
-        ),
-        SentenceCombining(
-            "Beggars can't",
-            "be choosers",
-            "Beggars can't be choosers"
-        ),
-        SentenceCombining(
-            "Better late",
-            "than never",
-            "Better late than never"
-        ),
-        SentenceCombining(
-            "Two heads are",
-            "better than one",
-            "Two heads are better than one"
-        ),
-        SentenceCombining(
-            "The grass is always greener",
-            "on the other side",
-            "The grass is always greener on the other side"
-        ),
-        SentenceCombining(
-            "Don't count your chickens",
-            "before they hatch",
-            "Don't count your chickens before they hatch"
-        ),
-        SentenceCombining(
-            "You can't judge a book",
-            "by its cover",
-            "You can't judge a book by its cover"
-        ),
-        SentenceCombining(
-            "A penny saved",
-            "is a penny earned",
-            "A penny saved is a penny earned"
-        ),
-        SentenceCombining(
-            "The squeaky wheel",
-            "gets the grease",
-            "The squeaky wheel gets the grease"
-        ),
-        SentenceCombining(
-            "When the going gets tough",
-            "the tough get going",
-            "When the going gets tough the tough get going"
-        ),
-        SentenceCombining(
-            "No man is",
-            "an island",
-            "No man is an island"
-        ),
-        SentenceCombining(
-            "You can't have your cake",
-            "and eat it too",
-            "You can't have your cake and eat it too"
-        ),
-        SentenceCombining(
-            "There's no place",
-            "like home",
-            "There's no place like home"
-        ),
-        SentenceCombining(
-            "The best things in life",
-            "are free",
-            "The best things in life are free"
-        ),
-        SentenceCombining(
-            "Time heals",
-            "all wounds",
-            "Time heals all wounds"
-        ),
-        SentenceCombining(
-            "Practice makes",
-            "perfect",
-            "Practice makes perfect"
-        ),
-        SentenceCombining(
-            "Too many cooks",
-            "spoil the broth",
-            "Too many cooks spoil the broth"
-        ),
-        SentenceCombining(
-            "Many hands make",
-            "light work",
-            "Many hands make light work"
-        ),
-        SentenceCombining(
-            "Absence makes the heart",
-            "grow fonder",
-            "Absence makes the heart grow fonder"
-        ),
-        SentenceCombining(
-            "Out of sight",
-            "out of mind",
-            "Out of sight out of mind"
-        ),
-        SentenceCombining(
-            "You can't teach an old dog",
-            "new tricks",
-            "You can't teach an old dog new tricks"
-        ),
-        SentenceCombining(
-            "A rolling stone",
-            "gathers no moss",
-            "A rolling stone gathers no moss"
-        ),
-        SentenceCombining(
-            "Still waters",
-            "run deep",
-            "Still waters run deep"
-        ),
-        SentenceCombining(
-            "The apple doesn't fall far",
-            "from the tree",
-            "The apple doesn't fall far from the tree"
-        ),
-        SentenceCombining(
-            "Don't put all your eggs",
-            "in one basket",
-            "Don't put all your eggs in one basket"
-        ),
-        SentenceCombining(
-            "Every cloud has",
-            "a silver lining",
-            "Every cloud has a silver lining"
-        ),
-        SentenceCombining(
-            "A stitch in time",
-            "saves nine",
-            "A stitch in time saves nine"
-        ),
-        SentenceCombining(
-            "An apple a day",
-            "keeps the doctor away",
-            "An apple a day keeps the doctor away"
-        ))
+            SentenceCombining("The cat", "is sleeping", "The cat is sleeping"),
+            SentenceCombining("The dog", "barks loud", "The dog barks loud"),
+            SentenceCombining("I like", "ice cream", "I like ice cream"),
+            SentenceCombining("Birds fly", "in the sky", "Birds fly in the sky"),
+            SentenceCombining("The sun", "is hot", "The sun is hot"),
+            SentenceCombining("She runs", "very fast", "She runs very fast"),
+            SentenceCombining("Tom plays", "with toys", "Tom plays with toys"),
+            SentenceCombining("The cake", "is sweet", "The cake is sweet"),
+            SentenceCombining("He draws", "a car", "He draws a car"),
+            SentenceCombining("The boy", "reads a book", "The boy reads a book"),
+            SentenceCombining("Rain falls", "from the sky", "Rain falls from the sky"),
+            SentenceCombining("The bird", "sings well", "The bird sings well"),
+            SentenceCombining("She paints", "a flower", "She paints a flower"),
+            SentenceCombining("The tree", "is tall", "The tree is tall"),
+            SentenceCombining("He builds", "a tower", "He builds a tower"),
+            SentenceCombining("The horse", "runs fast", "The horse runs fast"),
+            SentenceCombining("The fish", "swims deep", "The fish swims deep"),
+            SentenceCombining("The sun", "shines bright", "The sun shines bright"),
+            SentenceCombining("The stars", "twinkle at night", "The stars twinkle at night"),
+            SentenceCombining("He eats", "an apple", "He eats an apple"),
+            SentenceCombining("She drinks", "cold milk", "She drinks cold milk"),
+            SentenceCombining("The kite", "flies high", "The kite flies high"),
+            SentenceCombining("The car", "is red", "The car is red"),
+            SentenceCombining("She jumps", "on the bed", "She jumps on the bed"),
+            SentenceCombining("The frog", "hops away", "The frog hops away"),
+            SentenceCombining("He writes", "a story", "He writes a story"),
+            SentenceCombining("The ship", "sails fast", "The ship sails fast"),
+            SentenceCombining("The flowers", "smell nice", "The flowers smell nice"),
+            SentenceCombining("The book", "is big", "The book is big"),
+            SentenceCombining("The snow", "is cold", "The snow is cold"),
+            SentenceCombining("The bird", "chirps softly", "The bird chirps softly"),
+            SentenceCombining("The train", "moves fast", "The train moves fast"),
+            SentenceCombining("She dances", "gracefully", "She dances gracefully"),
+            SentenceCombining("The lion", "roars loud", "The lion roars loud"),
+            SentenceCombining("He paints", "a house", "He paints a house"),
+            SentenceCombining("The water", "is cool", "The water is cool"),
+            SentenceCombining("The child", "draws a star", "The child draws a star"),
+            SentenceCombining("The apple", "is red", "The apple is red"),
+            SentenceCombining("She writes", "a poem", "She writes a poem"),
+            SentenceCombining("He builds", "a ship", "He builds a ship"),
+            SentenceCombining("The wind", "blows hard", "The wind blows hard"),
+            SentenceCombining("The cat", "purrs softly", "The cat purrs softly"),
+            SentenceCombining("He sings", "a song", "He sings a song"),
+            SentenceCombining("The flowers", "bloom beautifully", "The flowers bloom beautifully"),
+            SentenceCombining("The tree", "grows tall", "The tree grows tall"),
+            SentenceCombining("The ocean", "is vast", "The ocean is vast"),
+            SentenceCombining("The fire", "burns bright", "The fire burns bright"),
+            SentenceCombining("The night", "is calm", "The night is calm"),
+            SentenceCombining("He catches", "a fish", "He catches a fish"),
+            SentenceCombining("She cooks", "a meal", "She cooks a meal"),
+            SentenceCombining("The kite", "soars high", "The kite soars high"),
+            SentenceCombining("The dog", "wags its tail", "The dog wags its tail"),
+            SentenceCombining("She reads", "a book", "She reads a book"),
+            SentenceCombining("The river", "flows gently", "The river flows gently"),
+            SentenceCombining("He plays", "the guitar", "He plays the guitar"),
+            SentenceCombining("The sun", "rises slowly", "The sun rises slowly"),
+            SentenceCombining("The moon", "shines bright", "The moon shines bright"),
+            SentenceCombining("The child", "laughs loudly", "The child laughs loudly"),
+            SentenceCombining("She studies", "her lessons", "She studies her lessons")
+    )
+
+
 
 
 
     private val sentenceCompletingExamples = listOf(
         SentenceCompleting(
-            firstSentence = "She wanted to go for a walk",
-            secondSentence = "it was raining outside",
-            theWordToAdd = "but",
+            firstSentence = "The cat climbed the tree",
+            secondSentence = "it was chasing a bird",
+            theWordToAdd = "because",
+            listToChooseFrom = listOf("but", "because", "and", "so")
+        ),
+        SentenceCompleting(
+            firstSentence = "The boy ate his lunch",
+            secondSentence = "he was hungry",
+            theWordToAdd = "because",
             listToChooseFrom = listOf("and", "but", "because", "so")
         ),
         SentenceCompleting(
-            firstSentence = "He studied hard for the exam",
-            secondSentence = "he could achieve a high score",
-            theWordToAdd = "so",
-            listToChooseFrom = listOf("and", "but", "so", "because")
+            firstSentence = "The girl drew a picture",
+            secondSentence = "it was beautiful",
+            theWordToAdd = "and",
+            listToChooseFrom = listOf("but", "because", "and", "so")
         ),
         SentenceCompleting(
-            firstSentence = "They decided to stay indoors",
-            secondSentence = "the heavy snowfall",
-            theWordToAdd = "because of",
-            listToChooseFrom = listOf("in spite of", "because of", "and", "but")
-        ),
-        SentenceCompleting(
-            firstSentence = "The team played well",
-            secondSentence = "they lost the match",
-            theWordToAdd = "yet",
-            listToChooseFrom = listOf("so", "because", "yet", "and")
-        ),
-        SentenceCompleting(
-            firstSentence = "She enjoys reading books",
-            secondSentence = "novels and biographies",
-            theWordToAdd = "especially",
-            listToChooseFrom = listOf("but", "especially", "so", "and")
-        ),
-        SentenceCompleting(
-            firstSentence = "He went to the store",
-            secondSentence = "buy some groceries",
-            theWordToAdd = "to",
-            listToChooseFrom = listOf("but", "to", "and", "so")
-        ),
-        SentenceCompleting(
-            firstSentence = "The project was challenging",
-            secondSentence = "we completed it on time",
-            theWordToAdd = "nevertheless",
-            listToChooseFrom = listOf("because", "so", "nevertheless", "and")
-        ),
-        SentenceCompleting(
-            firstSentence = "She practices the piano daily",
-            secondSentence = "improve her skills",
-            theWordToAdd = "in order to",
-            listToChooseFrom = listOf("but", "in order to", "and", "so")
-        ),
-        SentenceCompleting(
-            firstSentence = "The weather was perfect",
-            secondSentence = "we went for a hike",
-            theWordToAdd = "so",
-            listToChooseFrom = listOf("but", "because", "so", "and")
-        ),
-        SentenceCompleting(
-            firstSentence = "He was tired",
-            secondSentence = "he continued working",
-            theWordToAdd = "but",
-            listToChooseFrom = listOf("so", "because", "but", "and")
-        ),
-        // Additional examples
-        SentenceCompleting(
-            firstSentence = "The sun was setting",
-            secondSentence = "the sky turned orange",
-            theWordToAdd = "as",
-            listToChooseFrom = listOf("but", "as", "so", "because")
-        ),
-        SentenceCompleting(
-            firstSentence = "She didn't see the step",
-            secondSentence = "she tripped and fell",
-            theWordToAdd = "therefore",
-            listToChooseFrom = listOf("and", "but", "therefore", "so")
-        ),
-        SentenceCompleting(
-            firstSentence = "He loves to travel",
-            secondSentence = "he rarely has time for vacations",
-            theWordToAdd = "yet",
-            listToChooseFrom = listOf("so", "because", "yet", "and")
-        ),
-        SentenceCompleting(
-            firstSentence = "The cake was burnt",
-            secondSentence = "she forgot to set a timer",
+            firstSentence = "They went to the park",
+            secondSentence = "it was sunny",
             theWordToAdd = "because",
-            listToChooseFrom = listOf("but", "because", "so", "and")
+            listToChooseFrom = listOf("but", "because", "and", "so")
         ),
         SentenceCompleting(
-            firstSentence = "They saved money for months",
-            secondSentence = "they could buy a new car",
-            theWordToAdd = "so that",
-            listToChooseFrom = listOf("but", "because", "so that", "and")
+            firstSentence = "The dog barked loudly",
+            secondSentence = "it saw a stranger",
+            theWordToAdd = "because",
+            listToChooseFrom = listOf("and", "but", "because", "so")
         ),
         SentenceCompleting(
-            firstSentence = "The movie was boring",
-            secondSentence = "we left before it ended",
-            theWordToAdd = "so",
-            listToChooseFrom = listOf("but", "because", "so", "and")
+            firstSentence = "She went to bed early",
+            secondSentence = "she was tired",
+            theWordToAdd = "because",
+            listToChooseFrom = listOf("but", "because", "and", "so")
         ),
         SentenceCompleting(
-            firstSentence = "He didn't study",
-            secondSentence = "he failed the exam",
-            theWordToAdd = "consequently",
-            listToChooseFrom = listOf("but", "because", "consequently", "and")
+            firstSentence = "He opened the window",
+            secondSentence = "it was hot inside",
+            theWordToAdd = "because",
+            listToChooseFrom = listOf("and", "but", "because", "so")
         ),
         SentenceCompleting(
-            firstSentence = "She was very tired",
-            secondSentence = "she kept working",
-            theWordToAdd = "nevertheless",
-            listToChooseFrom = listOf("but", "because", "nevertheless", "and")
+            firstSentence = "The baby laughed",
+            secondSentence = "her mom made a funny face",
+            theWordToAdd = "because",
+            listToChooseFrom = listOf("but", "because", "and", "so")
         ),
         SentenceCompleting(
-            firstSentence = "The store was closed",
-            secondSentence = "we went to another one",
-            theWordToAdd = "so",
-            listToChooseFrom = listOf("but", "because", "so", "and")
+            firstSentence = "The boy ran fast",
+            secondSentence = "he wanted to win",
+            theWordToAdd = "because",
+            listToChooseFrom = listOf("but", "because", "and", "so")
         ),
         SentenceCompleting(
-            firstSentence = "He didn't like the meal",
-            secondSentence = "he ate it anyway",
-            theWordToAdd = "but",
-            listToChooseFrom = listOf("but", "because", "so", "and")
+            firstSentence = "She wore her coat",
+            secondSentence = "it was cold outside",
+            theWordToAdd = "because",
+            listToChooseFrom = listOf("and", "but", "because", "so")
+        ),
+        SentenceCompleting(
+            firstSentence = "The dog barked",
+            secondSentence = "it saw a cat",
+            theWordToAdd = "because",
+            listToChooseFrom = listOf("and", "but", "because", "so")
+        ),
+        SentenceCompleting(
+            firstSentence = "The boy cried",
+            secondSentence = "he fell down",
+            theWordToAdd = "because",
+            listToChooseFrom = listOf("and", "but", "because", "so")
+        ),
+        SentenceCompleting(
+            firstSentence = "The wind blew",
+            secondSentence = "the leaves moved",
+            theWordToAdd = "and",
+            listToChooseFrom = listOf("and", "but", "because", "so")
+        ),
+        SentenceCompleting(
+            firstSentence = "The bird flew",
+            secondSentence = "it had wings",
+            theWordToAdd = "because",
+            listToChooseFrom = listOf("and", "but", "because", "so")
+        ),
+        SentenceCompleting(
+            firstSentence = "The ice melted",
+            secondSentence = "it was hot",
+            theWordToAdd = "because",
+            listToChooseFrom = listOf("and", "but", "because", "so")
+        ),
+        SentenceCompleting(
+            firstSentence = "The car stopped",
+            secondSentence = "the driver pressed the brake",
+            theWordToAdd = "because",
+            listToChooseFrom = listOf("and", "but", "because", "so")
+        ),
+        SentenceCompleting(
+        firstSentence = "The baby cried",
+        secondSentence = "it was hungry",
+        theWordToAdd = "because",
+        listToChooseFrom = listOf("and", "but", "because", "so")
+        ),
+        SentenceCompleting(
+        firstSentence = "The leaf fell",
+        secondSentence = "the wind blew it",
+        theWordToAdd = "because",
+        listToChooseFrom = listOf("and", "but", "because", "so")
+        ),
+        SentenceCompleting(
+        firstSentence = "The cat purred",
+        secondSentence = "it was happy",
+        theWordToAdd = "because",
+        listToChooseFrom = listOf("and", "but", "because", "so")
+        ),
+        SentenceCompleting(
+        firstSentence = "The fish swam away",
+        secondSentence = "it was scared",
+        theWordToAdd = "because",
+        listToChooseFrom = listOf("and", "but", "because", "so")
         )
+
     )
+
 
 
     fun getRandomCombingSentence(): SentenceCombining{

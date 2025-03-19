@@ -139,7 +139,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val child = db.getChildById(childId)
             withContext(Dispatchers.Main) {
-                binding.activeChild.text = "Active : ${child.name}"
+                binding.activeChild.text = "Active child : ${child.name}"
             }
             ChildTraker.setReadingRate(child.readingRate)
             ChildTraker.setWritingRate(child.writingRate)

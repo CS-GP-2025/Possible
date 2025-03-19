@@ -62,4 +62,7 @@ class SpecialistMainActivity : AppCompatActivity() {
         AppDataManager.viewProfileImage(binding.profileIV,pref,this)
         Log.d("ImageProfile"," ${AppDataManager.getProfileDetails(pref).imagePath} from main activity")
     }
+
+
+
 }

@@ -1,5 +1,6 @@
 package com.example.possible.ui.signLogin.Login
 
+import DialogBuilder
 import android.content.Intent
 import android.os.Bundle
 import android.view.View.GONE
@@ -28,6 +29,9 @@ class LoginActivity : AppCompatActivity() {
         pref = SharedPref(this)
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         setControllers()
+        DialogBuilder.ipDialog(this){
+            pref.setIp(it)
+        }
 
     }
     private fun setPathOfApp(path:String){

@@ -14,6 +14,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.possible.databinding.ActivityReportBinding
 import com.example.possible.model.Child
 import com.example.possible.repo.local.database.LocalRepoImp
+import com.example.possible.ui.profile.children.testsForChildren.TestsDoneFragment
 import com.example.possible.util.adapter.FragmentAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.Dispatchers
@@ -62,7 +63,8 @@ class ReportActivity : AppCompatActivity() {
                     val latestDayOfWriting = child!!.latestWritingDay
                     val adapter = FragmentAdapter(this@ReportActivity, arrayListOf(
                         ReadingFragment().newInstance(readingRate,readingDays,latestDayOfReading),
-                        WritingFragment().newInstance(writingRate,writingDays,latestDayOfWriting)
+                        WritingFragment().newInstance(writingRate,writingDays,latestDayOfWriting),
+                        TestsDoneFragment().newInstance(childId)
                     )
                     )
                     binding.viewPager.adapter = adapter
@@ -71,6 +73,7 @@ class ReportActivity : AppCompatActivity() {
                         tab.text = when (position) {
                             0 -> "Reading"
                             1 -> "Writing"
+                            2 -> "Solved Tests"
                             else -> "Tab"
                         }
                     }.attach()
@@ -94,10 +97,21 @@ class ReportActivity : AppCompatActivity() {
                 super.onPageSelected(position)
                 when (position) {
                     0 -> {
+                        binding.progressBar.animate().alpha(1f).setDuration(0).start()
+                        binding.textView6.animate().alpha(1f).setDuration(0).start()
+                        binding.progressValue.animate().alpha(1f).setDuration(0).start()
                         animateProgressWithText(binding.progressBar, binding.progressValue, readingRate)
                     }
                     1 -> {
+                        binding.progressBar.animate().alpha(1f).setDuration(0).start()
+                        binding.textView6.animate().alpha(1f).setDuration(0).start()
+                        binding.progressValue.animate().alpha(1f).setDuration(0).start()
                         animateProgressWithText(binding.progressBar, binding.progressValue, writingRate)
+                    }
+                    2 ->{
+                        binding.textView6.animate().alpha(0f).setDuration(100).start()
+                        binding.progressValue.animate().alpha(0f).setDuration(100).start()
+                        binding.progressBar.animate().alpha(0f).setDuration(100).start()
                     }
                 }
                 }

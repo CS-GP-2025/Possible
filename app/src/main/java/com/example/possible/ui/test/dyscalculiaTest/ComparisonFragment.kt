@@ -72,10 +72,21 @@ class ComparisonFragment : Fragment() {
         handleSignView()
 
     }
-     fun getResult():Int{
-        if(question.third==binding.sign.text.toString()){
-            return 2
+    fun getResult(): Int {
+        return try {
+            if (!::binding.isInitialized) {  // تأكد إن الـ binding متعرف
+                throw IllegalStateException("Binding is not initialized.")
+            }
+
+            if (question.third == binding.sign.text.toString()) {
+                2
+            } else {
+                0
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            0
         }
-        return 0
     }
+
 }

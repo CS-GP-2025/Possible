@@ -12,14 +12,14 @@
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp"
         app:tabIndicatorColor="#E00E5A"
         app:tabIndicatorHeight="2dp"
-        app:tabSelectedTextColor="@color/black"
-        app:tabTextColor="@color/white"
+        app:tabSelectedTextAppearance="@style/CustomSelectedTextAppearance"
+        app:tabTextAppearance="@style/CustomTabTextAppearance"
         tools:ignore="SpeakableTextPresentCheck" />
 
     <androidx.viewpager2.widget.ViewPager2

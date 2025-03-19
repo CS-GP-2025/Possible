@@ -3,6 +3,7 @@ package com.example.possible.ui.profile.children
 import DialogBuilder
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.READ_MEDIA_IMAGES
+import android.app.Dialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
+import com.example.possible.R
 import com.example.possible.databinding.ActivityChildrenBinding
 import com.example.possible.model.Child
 import com.example.possible.repo.local.SharedPref
@@ -30,6 +32,7 @@ class Children : AppCompatActivity(), ChildListener {
     private var mode = ""
     private lateinit var pref: SharedPref
     private lateinit var viewModel: ChildrenViewModel
+    private lateinit var loadingDialog :Dialog
 
     private val perReqCode = 100
 
@@ -39,10 +42,10 @@ class Children : AppCompatActivity(), ChildListener {
         binding = ActivityChildrenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         enableEdgeToEdge()
+        loadingDialog = Dialog(this)
         initializeComponents()
         checkAndRequestPermissions()
         observeViewModel { setUpAdapter() }
-        observeRemote()
         mode = intent.getStringExtra("mode")!!
         controlForViewMode()
         binding.backArrowIV.setOnClickListener { finish() }
@@ -60,13 +63,40 @@ class Children : AppCompatActivity(), ChildListener {
         viewModel = ViewModelProvider(this)[ChildrenViewModel::class.java]
 
         if (pref.getCounter() == 0) {
+
+
             if(pref.getRole()=="User")
 
-            {viewModel.getChildrenFromApi(pref)}
-            else
-            { viewModel.getAllChildrenFromApi(pref) }
+            {viewModel.getUserChildrenFromApi(
+                onStart = {
+                    loadingDialog.setContentView(R.layout.loading_dialog)
+                    loadingDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                    loadingDialog.setCancelable(false)
+                    loadingDialog.show()
 
-            pref.setCounter(1)
+                }
+                ,this, db,pref,
+                onFinish = {
+                    loadingDialog.dismiss()
+                       pref.setCounter(1)
+                }
+            )}
+            else if (pref.getRole()=="Specialist")
+            { viewModel.getAllChildrenFromApi(
+                onStart = {
+                    loadingDialog.setContentView(R.layout.loading_dialog)
+                    loadingDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                    loadingDialog.setCancelable(false)
+                    loadingDialog.show()
+                 }
+
+                ,this, db,pref,
+                onFinish = {
+                    loadingDialog.dismiss()
+                }
+            )
+            }
+
         } else {
             viewModel.getChildren(db)
         }
@@ -75,12 +105,14 @@ class Children : AppCompatActivity(), ChildListener {
     private fun observeViewModel(onEnd: () -> Unit) {
         viewModel.children.observe(this) {
             childrenList = it as ArrayList<Child>
+
             if (childrenList.isEmpty()) {
                 binding.recyclerView.visibility = View.GONE
                 binding.hint.visibility = View.VISIBLE
             } else {
                 binding.recyclerView.visibility = View.VISIBLE
                 binding.hint.visibility = View.GONE
+
                 if (deletedPos != -1) {
                     adapter.onDelete(deletedPos, childrenList)
                     deletedPos = -1
@@ -88,14 +120,6 @@ class Children : AppCompatActivity(), ChildListener {
                 else{
                 onEnd()}
             }
-        }
-    }
-    private fun observeRemote(){
-        viewModel.childrenRemote.observe(this) {
-            viewModel.storeUserChildrenIntoRoom(it, db, this)
-        }
-        viewModel.allChildren.observe(this) {
-            viewModel.storeAllChildrenIntoRoom(it, db, this)
         }
     }
 
@@ -107,6 +131,7 @@ class Children : AppCompatActivity(), ChildListener {
     private fun setUpAdapter() {
         adapter = ChildrenAdapter(childrenList, this, pref)
         binding.recyclerView.adapter = adapter
+
     }
 
     private fun checkAndRequestPermissions() {
@@ -120,8 +145,8 @@ class Children : AppCompatActivity(), ChildListener {
 
     override fun onDelete(position: Int, child: Child) {
         deletedPos = position
-        DialogBuilder.showAlertDialog(this, "Delete Child",
-            "Are you sure you want to delete this child?",
+        DialogBuilder.showAlertDialog(this, "Are you sure you want to delete ${child.name}?","Delete ${child.name}",
+
             "Yes", "No",
             {
                 viewModel.deleteChild({
@@ -143,8 +168,8 @@ class Children : AppCompatActivity(), ChildListener {
     override fun onClick(child: Child) {
         if(mode=="select"){
             DialogBuilder.showAlertDialog(this,
-                "Select this Child for Training",
-                "Hello!"
+                "Select ${child.name}, for Training",
+                child.name
                 ,"Yes",
                 "No",{
                     val intent = Intent(this, MainActivity::class.java)
@@ -179,4 +204,5 @@ class Children : AppCompatActivity(), ChildListener {
             binding.addChild.visibility=View.VISIBLE
         }
     }
+
 }

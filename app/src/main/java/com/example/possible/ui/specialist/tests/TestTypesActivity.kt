@@ -33,11 +33,7 @@ class TestTypesActivity : AppCompatActivity() {
         binding.backArrowIV.setOnClickListener {
             finish()
         }
-        binding.root.setOnClickListener {
-            val intent = Intent(this, SentenceMainActivity::class.java)
-            intent.putExtra("mode","completing")
-            startActivity(intent)
-        }
+
 
 
     }

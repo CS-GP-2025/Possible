@@ -2,6 +2,7 @@ package com.example.possible.ui.specialist.tests
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ArrayAdapter
@@ -9,26 +10,35 @@ import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.possible.databinding.ActivitySettingTestBinding
+import com.example.possible.model.Child
 import com.example.possible.model.Question
 import com.example.possible.model.Test
-import com.example.possible.repo.local.LettersAndNumbers
 import com.example.possible.repo.local.SharedPref
+import com.example.possible.repo.local.database.LocalRepoImp
 import com.example.possible.ui.LettersNumbersActivity
-import com.example.possible.ui.drawing.DrawingActivity
 import com.example.possible.ui.math.AddingActivity
 import com.example.possible.ui.math.ArithmeticSequenceActivity
 import com.example.possible.ui.math.ComparisonActivity
+import com.example.possible.ui.profile.children.ChildrenViewModel
 import com.example.possible.ui.test.dysgraphiaTest.SentenceMainActivity
-import com.example.possible.ui.tracing.TracingActivity
-import com.example.possible.util.Tests
+import com.example.possible.util.testsManage.TestGenerator
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 class SettingTestActivity : AppCompatActivity() {
     // Binding object for accessing UI components
     private lateinit var binding: ActivitySettingTestBinding
     private lateinit var listOfOption: List<String>
     private lateinit var test: Test
     private lateinit var pref: SharedPref
+    private  var children  = listOf<Child>()
+    private lateinit var db: LocalRepoImp
+    private lateinit var childrenViewModel : ChildrenViewModel
 
     private var numOfQuestion: Int = 0
     private var typeLetterOrNumber: String = ""
@@ -39,7 +49,11 @@ class SettingTestActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivitySettingTestBinding.inflate(layoutInflater)
+        childrenViewModel = ViewModelProvider(this)[ChildrenViewModel::class.java]
         setContentView(binding.root)
+        db = LocalRepoImp(this)
+        pref = SharedPref(this)
+        getAllChildren()
 
         pref = SharedPref(this)
         val type = intent.getStringExtra("type") ?: ""
@@ -50,12 +64,13 @@ class SettingTestActivity : AppCompatActivity() {
         listOfOption = setTheList(type)
 
         setupControllers()
+
         manageLevel()
     }
 
     // Sets up UI controllers and event listeners
     private fun setupControllers() {
-        binding.backArrowIV.setOnClickListener { finish() }
+        binding.backMain.setOnClickListener { finish() }
 
         listOf(binding.autoCompleteQ1, binding.autoCompleteQ2, binding.autoCompleteQ3, binding.autoCompleteQ4).forEachIndexed { index, autoComplete ->
             setAutoChoose(autoComplete, index + 1)
@@ -64,9 +79,7 @@ class SettingTestActivity : AppCompatActivity() {
 
         binding.doneBtn.setOnClickListener {
             if (isAllFieldsFilled()) {
-                Toast.makeText(this, "Test is ready", Toast.LENGTH_SHORT).show()
                 setTest()
-                finish()
             } else {
                 Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
             }
@@ -140,8 +153,31 @@ class SettingTestActivity : AppCompatActivity() {
             Question(binding.autoCompleteQ3.text.toString(), pref.getQ3()!!),
             Question(binding.autoCompleteQ4.text.toString(), pref.getQ4()!!)
         )
-        test = Test(binding.nameOfTest.text.toString(), binding.typeOfTest.text.toString(), questions)
-        Tests.tests.add(test)
+        val testName = "${getExamCode()}${binding.nameOfTest.text}"
+        val testType = binding.typeOfTest.text.toString()
+        if (children.isEmpty()){
+            Toast.makeText(this, "There are no children to send!, check your internet connection and try again", Toast.LENGTH_SHORT).show()
+            return
+        }
+        DialogBuilder.showSelectChildrenDialog(
+            this,
+            children,
+            testName,
+            testType,
+            questions,
+            onConfirm = { test ->
+                sendTest(test)
+            }
+        )
+
+    }
+    private fun sendTest(test: Test){
+        TestGenerator.sendTest(
+            {binding.loadingView.visibility=VISIBLE},
+            test, this, pref,
+            {
+                binding.loadingView.visibility=GONE
+                finish() })
     }
 
     // Selects a random letter or number for tracing or drawing activity
@@ -157,7 +193,7 @@ class SettingTestActivity : AppCompatActivity() {
 
     // Manages the selection between beginner and professional levels
     private fun manageLevel() {
-        binding.backArrowIV.setOnClickListener { binding.beginnerOrProf.visibility = GONE }
+        binding.hideView.setOnClickListener { binding.beginnerOrProf.visibility = GONE }
         binding.proIV.setOnClickListener { setLevel("pro") }
         binding.beginnerIV.setOnClickListener { setLevel("beginner") }
     }
@@ -167,5 +203,26 @@ class SettingTestActivity : AppCompatActivity() {
         level = newLevel
         binding.beginnerOrProf.visibility = GONE
         setRandomLetterOrNumber(typeLetterOrNumber, numOfQuestion)
+    }
+    private fun getExamCode():String{
+        val currentTimestamp = System.currentTimeMillis()
+        val sixDigitCode = currentTimestamp.toString().takeLast(6)
+        return sixDigitCode
+    }
+    private fun getAllChildren() {
+        lifecycleScope.launch {
+            childrenViewModel.getAllChildrenFromApi(
+                onStart = {},
+                context = this@SettingTestActivity,
+                db = db,
+                pref = pref,
+                onFinish = {
+                    }
+
+            )
+            childrenViewModel.children.observe(this@SettingTestActivity) {
+                children = it
+            }
+        }
     }
 }

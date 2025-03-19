@@ -3,7 +3,14 @@ import android.app.Dialog
 import android.content.Context
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.recyclerview.widget.RecyclerView
 import com.example.possible.R
+import com.example.possible.model.Child
+import com.example.possible.model.Question
+import com.example.possible.model.Test
+import com.example.possible.repo.local.SharedPref
+import com.example.possible.util.adapter.SelectingAdapter
+import com.google.android.material.textfield.TextInputEditText
 
 object DialogBuilder {
     fun showAlertDialog(
@@ -72,5 +79,61 @@ object DialogBuilder {
             successDialog.dismiss()
         }
         successDialog.show()
+    }
+
+    fun showSelectChildrenDialog(context: Context, listOfChildren:List<Child>,
+                                 testName:String, testType:String, questions:List<Question>,
+                                 onConfirm: (test:Test) -> Unit){
+        var finalSelectedItems = ArrayList<String>()
+        val selectChildrenDialog = Dialog(context)
+        selectChildrenDialog.setContentView(R.layout.select_children_dialog)
+        selectChildrenDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        selectChildrenDialog.setCancelable(true)
+        val btn = selectChildrenDialog.findViewById<AppCompatButton>(R.id.sendBtn)
+        val recyclerView = selectChildrenDialog.findViewById<RecyclerView>(R.id.selectingAdapter)
+        val adapter = SelectingAdapter(listOfChildren as ArrayList<Child>)
+        recyclerView.adapter = adapter
+        btn.setOnClickListener {
+            this.showAlertDialog(context,"Confirm sending the exam?","Confirm",
+                "Confirm","Undo",onConfirm={
+                    val selectedItems = adapter.getSelectedItems()
+                    finalSelectedItems = selectedItems
+                    if (selectedItems.isNotEmpty()) {
+                        val test = Test(testName, testType, questions, finalSelectedItems)
+                        onConfirm(test)
+                    }
+                    else{
+                        showErrorDialog(context,"Please select at least one child","OK")
+                    }
+                },
+                onCancel = {
+
+                })
+            // Get the selected items from the adapter
+
+            selectChildrenDialog.dismiss()
+        }
+        selectChildrenDialog.show()
+    }
+
+    fun ipDialog(context: Context,onConfirm: (ip:String) -> Unit){
+        val ipDialog = Dialog(context)
+        ipDialog.setContentView(R.layout.add_ip_dialog)
+        ipDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        ipDialog.setCancelable(true)
+        val btn = ipDialog.findViewById<AppCompatButton>(R.id.save)
+        val ipEt = ipDialog.findViewById<TextInputEditText>(R.id.ipEt)
+        ipEt.setText(SharedPref(context).getIp())
+        btn.setOnClickListener {
+            if (ipEt.text.toString().isEmpty()){
+                showErrorDialog(context,"Please enter a valid IP","OK")
+                return@setOnClickListener
+            }
+            onConfirm(ipEt.text.toString())
+            ipDialog.dismiss()
+        }
+        ipDialog.show()
+
+
     }
 }

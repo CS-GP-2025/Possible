@@ -2,8 +2,9 @@ package com.example.possible.ui.profile
 
 import DialogBuilder
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.ActivityManager
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -58,6 +59,14 @@ class ProfileActivity : AppCompatActivity() {
             }
 
         }
+        binding.locall.setOnClickListener {
+            animateBtn(binding.locall){
+                DialogBuilder.ipDialog(this){
+                    sharedPreferences.setIp(it)
+                    Toast.makeText(this, SharedPref(this).getIp(), Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
         binding.logoutLL.setOnClickListener {
             animateBtn(binding.logoutLL){
                 DialogBuilder.showAlertDialog(this,
@@ -67,7 +76,6 @@ class ProfileActivity : AppCompatActivity() {
                     "Cancel",
                     {
                         logout()
-                        finish()
                     },
                     {
                         //nothing
@@ -122,21 +130,37 @@ class ProfileActivity : AppCompatActivity() {
     fun clearAppDataAndRestart(context: Context) {
         try {
             // Clear app data
-            (context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager)?.clearApplicationUserData()
+            val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
+            if (activityManager != null) {
+                activityManager.clearApplicationUserData()
+            }
 
-            // Restart the app
+            // استخدام PendingIntent لتشغيل التطبيق بعد خروجه
             val restartIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
-            restartIntent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(restartIntent)
-            (context as? Activity)?.finish()
+            val pendingIntentId = 123456
+            val pendingIntent = PendingIntent.getActivity(
+                context,
+                pendingIntentId,
+                restartIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
 
-            // Kill the app process
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.set(
+                AlarmManager.RTC,
+                System.currentTimeMillis() + 1000, // إعادة التشغيل بعد ثانية واحدة
+                pendingIntent
+            )
+
+            // الخروج من التطبيق
             exitProcess(0)
 
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
+
+
 
 
 

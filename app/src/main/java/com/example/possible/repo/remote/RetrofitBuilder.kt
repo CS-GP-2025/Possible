@@ -10,6 +10,8 @@ import com.example.possible.repo.remote.api.children.DeleteChildApiService
 import com.example.possible.repo.remote.api.children.GetAllChildren
 import com.example.possible.repo.remote.api.children.GetUserChildren
 import com.example.possible.repo.remote.api.children.UpdateChild
+import com.example.possible.repo.remote.api.specialist.GetChildTests
+import com.example.possible.repo.remote.api.specialist.SendExamOnlineService
 import com.example.possible.repo.remote.response.lettersNumbers.LetterApiResponse
 import com.example.possible.repo.remote.response.lettersNumbers.LetterResponseDeserializer
 import com.google.gson.Gson
@@ -23,9 +25,9 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitBuilder {
 
-    private const val LOCALHOST_IP ="192.168.1.2"
-    private const val LETTERS_BASE_URL = "http://$LOCALHOST_IP:5000/"
-    private const val NUMBERS_BASE_URL = "http://$LOCALHOST_IP:3000/"
+    private  var LOCALHOST_IP = " "
+    private  var LETTERS_BASE_URL = "http://$LOCALHOST_IP:5000/"
+    private  var NUMBERS_BASE_URL = "http://$LOCALHOST_IP:3000/"
     private const val API_BASE_URL = "https://gp-api.runasp.net/api/"
 
     private val gsonLetterPrediction: Gson = GsonBuilder()
@@ -103,5 +105,18 @@ object RetrofitBuilder {
     }
     val getAllChildrenApiService: GetAllChildren by lazy {
         apiRetrofit.create(GetAllChildren::class.java)
+    }
+
+    //test Api services
+    val sendExamOnlineService: SendExamOnlineService by lazy {
+        apiRetrofit.create(SendExamOnlineService::class.java)
+    }
+    val getChildTests: GetChildTests by lazy {
+        apiRetrofit.create(GetChildTests::class.java)
+    }
+    fun setIp(ip: String) {
+        LOCALHOST_IP = ip
+        LETTERS_BASE_URL = "http://$LOCALHOST_IP:5000/"
+        NUMBERS_BASE_URL = "http://$LOCALHOST_IP:3000/"
     }
 }

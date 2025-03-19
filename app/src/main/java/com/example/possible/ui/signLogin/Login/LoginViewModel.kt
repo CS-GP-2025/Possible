@@ -42,7 +42,6 @@ class LoginViewModel : ViewModel() {
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         val registerResponse = response.body()!!
-                        Toast.makeText(context, "✅ Login Success!", Toast.LENGTH_SHORT).show()
                         val username = registerResponse.userName
                         val image = registerResponse.image
                         val token = registerResponse.token
@@ -62,6 +61,7 @@ class LoginViewModel : ViewModel() {
                             role
                         )
                         delay(1000)
+                        Toast.makeText(context, "✅ Login Success!", Toast.LENGTH_SHORT).show()
                         onLoginSuccess()
 
                     } else {

@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.possible.databinding.FragmentDrawingBinding
 import com.example.possible.repo.local.LettersAndNumbers
+import com.example.possible.repo.local.SharedPref
 import com.example.possible.repo.remote.RetrofitBuilder
 import com.example.possible.repo.remote.response.lettersNumbers.LetterApiResponse
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 
 class DrawingFragment : Fragment() {
     private lateinit var binding: FragmentDrawingBinding
@@ -45,6 +47,11 @@ class DrawingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+        //setTheIp
+        val ip = SharedPref(requireContext()).getIp()!!.trim()
+        RetrofitBuilder.setIp(ip)
+
+
         binding = FragmentDrawingBinding.inflate(inflater, container, false)
         type = arguments?.getString("type")!!
         index = arguments?.getInt("index")!!
@@ -74,44 +81,79 @@ class DrawingFragment : Fragment() {
         }
     }
 
-
     private suspend fun sendToLetterPrediction(): Boolean {
-        val image = convertBitmapToMultipartBody(binding.drawer.getBitmap()!!, requireContext())
-        val request = RetrofitBuilder.letterApiService.uploadLetterImage(image)
-        return if (request.isSuccessful) {
-            val responseBody = request.body()
-            if (responseBody != null) {
-                handleResponse(responseBody)
-                withContext(Dispatchers.Main) {
-                  //  Toast.makeText(requireContext(), prediction, Toast.LENGTH_SHORT).show()
+        return try {
+            val image = convertBitmapToMultipartBody(binding.drawer.getBitmap()!!, requireContext())
+
+            val request = RetrofitBuilder.letterApiService.uploadLetterImage(image)
+
+            if (request.isSuccessful) {
+                val responseBody = request.body()
+                if (responseBody != null) {
+                    handleResponse(responseBody)
+
+                    name == prediction // Return the result after the task is finished
+                } else {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), "Error: Empty response from the server!", Toast.LENGTH_SHORT).show()
+                    }
+                    false
                 }
-                name == prediction // إرجاع النتيجة بعد انتهاء المهمة
             } else {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Request failed: ${request.code()} - ${request.message()}", Toast.LENGTH_SHORT).show()
+                }
                 false
             }
-        } else {
+        } catch (e: IOException) { // Internet connection or I/O problems
+            withContext(Dispatchers.Main) {
+                Toast.makeText(requireContext(), "Connection error! Please check your internet connection.", Toast.LENGTH_SHORT).show()
+            }
+            false
+        } catch (e: Exception) { // Any other unexpected error
+            withContext(Dispatchers.Main) {
+                Toast.makeText(requireContext(), "Unexpected error occurred: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
             false
         }
     }
+
 
     private suspend fun sendToNumberPrediction(): Boolean {
-        val image = convertBitmapToMultipartBody(binding.drawer.getBitmap()!!, requireContext())
-        val request = RetrofitBuilder.numberApiService.uploadNumberImage(image)
-        return if (request.isSuccessful) {
-            val responseBody = request.body()
-            if (responseBody != null) {
-                prediction = responseBody.predicted_class.toString()
-                withContext(Dispatchers.Main){
-                    //Toast.makeText(requireContext(), prediction, Toast.LENGTH_SHORT).show()
+        return try {
+            val image = convertBitmapToMultipartBody(binding.drawer.getBitmap()!!, requireContext())
+            val request = RetrofitBuilder.numberApiService.uploadNumberImage(image)
+
+            if (request.isSuccessful) {
+                val responseBody = request.body()
+                if (responseBody != null) {
+                    prediction = responseBody.predicted_class.toString()
+                    name == prediction // Return the result after the task is finished
+                } else {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), "Error: Empty response from the server!", Toast.LENGTH_SHORT).show()
+                    }
+                    false
                 }
-                name == prediction // إرجاع النتيجة بعد انتهاء المهمة
             } else {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Request failed: ${request.code()} - ${request.message()}", Toast.LENGTH_SHORT).show()
+                }
                 false
             }
-        } else {
+        } catch (e: IOException) { // Internet connection or I/O problems
+            withContext(Dispatchers.Main) {
+                Toast.makeText(requireContext(), "Connection error! Please check your internet connection.", Toast.LENGTH_SHORT).show()
+            }
+            false
+        } catch (e: Exception) { // Any other unexpected error
+            withContext(Dispatchers.Main) {
+                Toast.makeText(requireContext(), "Unexpected error occurred: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
             false
         }
     }
+
 
     @SuppressLint("SetTextI18n")
     private fun handleResponse(response: LetterApiResponse) {
